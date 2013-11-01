@@ -40,4 +40,7 @@ public class Fachada_Persistencia {
         }
         return lista;
     }
+    public void Guardar(){
+        
+    }
 }

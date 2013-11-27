@@ -42,5 +42,6 @@ public class Fachada_Persistencia {
     }
     public void Guardar(){
         int i=0;
+        int e=0;
     }
 }

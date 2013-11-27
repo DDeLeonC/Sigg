@@ -41,6 +41,6 @@ public class Fachada_Persistencia {
         return lista;
     }
     public void Guardar(){
-        
+        int i=0;
     }
 }

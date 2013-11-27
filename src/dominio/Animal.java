@@ -53,6 +53,8 @@ public class Animal implements Serializable {
     @ManyToOne (cascade = CascadeType.ALL)
     private Productor productor;
     
+    @ManyToOne(cascade = CascadeType.ALL)
+    private Tropa tropa;
     
     //pesadas es relación
     public Long getId() {
@@ -110,8 +112,16 @@ public class Animal implements Serializable {
     public void setProductor(Productor productor) {
         this.productor = productor;
     }
-    
 
+    public Tropa getTropa() {
+        return tropa;
+    }
+
+    public void setTropa(Tropa tropa) {
+        this.tropa = tropa;
+    }
+    
+    
     
 
     @Override

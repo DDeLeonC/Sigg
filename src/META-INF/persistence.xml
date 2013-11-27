@@ -10,6 +10,7 @@
     <class>dominio.Productor</class>
     <class>dominio.DetalleDieta</class>
     <class>dominio.CambioStock</class>
+    <class>dominio.Tropa</class>
     <properties>
       <!--<property name="eclipselink.ddl-generation.output-mode" value="database"/>-->
       <property name="hibernate.connection.username" value="root"/>

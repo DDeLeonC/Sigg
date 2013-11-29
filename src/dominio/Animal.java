@@ -5,6 +5,7 @@
 package dominio;
 
 import java.io.Serializable;
+import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -17,6 +18,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Persistence;
+import javax.persistence.Temporal;
 import javax.persistence.UniqueConstraint;
 
 /**
@@ -30,39 +32,56 @@ public class Animal implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    
     @Basic(optional = false)
     @Column(name = "nroCaravana")
     private int nroCaravana;
-    
     @Basic(optional = false)
     @Column(name = "pesoActual")
     private int pesoActual;
-    
     @Basic(optional = false)
     @Column(name = "pesoIngreso")
     private int pesoIngreso;
-    
-     @Basic(optional = false)
+    @Basic(optional = false)
     @Column(name = "estado")
     private String estado;
-    
     @ManyToOne(cascade = CascadeType.ALL)
     private CategoriaAnimal categoria;
-    
-    @ManyToOne (cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL)
     private Productor productor;
-    
     @ManyToOne(cascade = CascadeType.ALL)
     private Tropa tropa;
-    
+    @Basic(optional = false)
+    @Column(name = "fechaIng")
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date fechaIng;
+    @Basic(optional = true)
+    @Column(name = "fechaEgr")
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date fechaEgr;
     //pesadas es relación
+
     public Long getId() {
         return id;
     }
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Date getFechaIng() {
+        return fechaIng;
+    }
+
+    public void setFechaIng(Date fechaIng) {
+        this.fechaIng = fechaIng;
+    }
+
+    public Date getFechaEgr() {
+        return fechaEgr;
+    }
+
+    public void setFechaEgr(Date fechaEgr) {
+        this.fechaEgr = fechaEgr;
     }
 
     public int getNroCaravana() {
@@ -120,9 +139,6 @@ public class Animal implements Serializable {
     public void setTropa(Tropa tropa) {
         this.tropa = tropa;
     }
-    
-    
-    
 
     @Override
     public int hashCode() {

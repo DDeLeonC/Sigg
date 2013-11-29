@@ -13,6 +13,8 @@ import dominio.DetalleDieta;
 import dominio.Dieta;
 import dominio.Insumo;
 import dominio.Productor;
+import dominio.Tropa;
+import dominio.TropaAnimal;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
@@ -74,12 +76,18 @@ public class FachadaPersistencia extends Observable {
         return lista;
 
     }
+//crear gettransaction aca afuera
+    //hacer dos guardar con el mismo nombre solo que uno tenga mas parametros y hace la poarte de transaction
+    //el commit lo debe hacer despues que termine la transaction
 
-    public Object Guardar(Object obj) {
+    public Object Guardar(Object obj/*Transaction tx*/) {
+        //if (tx==null {
         em.getTransaction().begin();
+        //tx.gettransaction.begin();
+        //}else{
+        //tx.gettransaction   usa transaction pasado como parametro
         setChanged();
         try {
-            //merge guarda y  modifica  
             obj = em.merge(obj);
             em.getTransaction().commit();
             if (obj.getClass() != DetalleDieta.class && obj.getClass() != CambioStock.class) {
@@ -117,6 +125,9 @@ public class FachadaPersistencia extends Observable {
                 object = em.createQuery("Select d from Dieta d where d.nombre=:nom").setParameter("nom", aux).getSingleResult();
             } else if (o == Animal.class) {
                 object = em.createQuery("SELECT a FROM Animal a WHERE a.nroCaravana=:nro").setParameter("nro", Integer.parseInt(aux)).getSingleResult();
+            } else if (o == Tropa.class) {
+                //aca se debe modificar el buscar porque el identificador se puede repetir en distinta fecha
+                object = em.createQuery("SELECT t FROM Tropa t WHERE t.identificador=:nro").setParameter("nro", aux).getSingleResult();
             }
         } catch (NoResultException nre) {
             object = null;
@@ -126,7 +137,7 @@ public class FachadaPersistencia extends Observable {
 
     public List<Object> listadoHabilitados(Object obj) {
         List<Object> lista = null;
-        String object ="";
+        String object = "";
         if (obj == Productor.class) {
             lista = em.createQuery("select p from Productor p where p.estado='ACTIVO'").getResultList();
             object = "productores";
@@ -146,9 +157,7 @@ public class FachadaPersistencia extends Observable {
             lista = em.createQuery("select a from Animal a where a.estado='ACTIVO'").getResultList();
             object = "animales";
         }
-        if (lista.size() == 0) {
-            JOptionPane.showMessageDialog(null, "No existen " + object + " para listar.");
-        }
+
         return lista;
     }
 
@@ -216,5 +225,23 @@ public class FachadaPersistencia extends Observable {
         setChanged();
         notifyObservers();
         clearChanged();
+    }
+
+    public Object buscarMayor(Object o) {
+        Object object = new Object();
+        try {
+            if (o == Tropa.class) {
+                object = em.createQuery("Select MAX(t.identificador) from Tropa t").getSingleResult();
+            }
+        } catch (NoResultException nre) {
+            object = null;
+        }
+        return object;
+    }
+
+    public List<TropaAnimal> listarAnimales(Tropa t) {
+        List<TropaAnimal> lista = null;
+        lista = em.createQuery("select ta from TropaAnimal ta where ta.tropa=:tropa").setParameter("tropa", t).getResultList();
+        return lista;
     }
 }

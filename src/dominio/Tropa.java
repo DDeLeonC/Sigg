@@ -32,25 +32,25 @@ public class Tropa implements Serializable {
     @Column(name = "identificador")
     private String identificador;
     
-    @Basic(optional = false)
+    @Basic(optional = true)
     @Column(name = "tipoNegocio")
     private String tipoNegocio;
     @Basic(optional = false)
     @Column(name = "fechaSistema")
-    private java.sql.Date fechaSistema;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date fechaSistema;
     @Basic(optional = false)
     @Column(name = "fechaIngreso")
-    private java.sql.Date fechaIngreso;
-    @Basic(optional = false)
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date fechaIngreso;
+    @Basic(optional = true)
     @Column(name = "observaciones")
-    private java.sql.Date observaciones;
+    private String observaciones;
     @Basic(optional = false)
     @Column(name = "estado")
     private String estado;
     @ManyToOne(cascade = CascadeType.ALL)
     private Productor propietario;
-//    @OneToMany(cascade = CascadeType.ALL)
-//    private Animal animales;
 
     public Long getId() {
         return id;
@@ -82,7 +82,7 @@ public class Tropa implements Serializable {
         return estado;
     }
 
-    public void setEstado(String estado) {
+       public void setEstado(String estado) {
         this.estado = estado;
     }
 
@@ -94,30 +94,30 @@ public class Tropa implements Serializable {
         this.propietario = propietario;
     }
 
-    public java.sql.Date getFechaSistema() {
+    public Date getFechaSistema() {
         return fechaSistema;
     }
 
-    public void setFechaSistema(java.sql.Date fechaSistema) {
+    public void setFechaSistema(Date fechaSistema) {
         this.fechaSistema = fechaSistema;
     }
 
-    public java.sql.Date getFechaIngreso() {
+    public Date getFechaIngreso() {
         return fechaIngreso;
     }
 
-    public void setFechaIngreso(java.sql.Date fechaIngreso) {
+    public void setFechaIngreso(Date fechaIngreso) {
         this.fechaIngreso = fechaIngreso;
     }
 
     
     
 
-    public java.sql.Date getObservaciones() {
+    public String getObservaciones() {
         return observaciones;
     }
 
-    public void setObservaciones(java.sql.Date observaciones) {
+    public void setObservaciones(String observaciones) {
         this.observaciones = observaciones;
     }
 

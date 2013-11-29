@@ -23,8 +23,12 @@ import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import dominio.CambioStock;
+import dominio.Tropa;
+import dominio.TropaAnimal;
 import java.awt.TextField;
 import java.io.File;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Observable;
 import java.util.Observer;
@@ -50,6 +54,7 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
         initComponents();
         cargar_combos();
         cargar_listas();
+        txtNroTropa.setText(Integer.toString(Integer.parseInt((String) buscarMayor(Tropa.class)) + 1));
         FachadaPersistencia.getInstancia().addObserver(this);
     }
 
@@ -173,18 +178,33 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
         chkNo = new javax.swing.JCheckBox();
         jLabel36 = new javax.swing.JLabel();
         txtDicose = new javax.swing.JTextField();
-        jPanel1 = new javax.swing.JPanel();
+        tblTropa = new javax.swing.JPanel();
         jLabel37 = new javax.swing.JLabel();
         jLabel38 = new javax.swing.JLabel();
         jLabel39 = new javax.swing.JLabel();
         jLabel40 = new javax.swing.JLabel();
-        txtNtoTropa = new javax.swing.JTextField();
+        txtNroTropa = new javax.swing.JTextField();
         txtFechaIngreso = new javax.swing.JTextField();
-        jComboBox1 = new javax.swing.JComboBox();
+        cboPropietario = new javax.swing.JComboBox();
         lblDocumento = new javax.swing.JLabel();
         btnAbrirDocumento = new javax.swing.JButton();
         jScrollPane5 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tblAnimalesTropa = new javax.swing.JTable();
+        btnGuardarTropa = new javax.swing.JButton();
+        btnBuscarTropa = new javax.swing.JButton();
+        btnEliminarTropa = new javax.swing.JButton();
+        jLabel41 = new javax.swing.JLabel();
+        lblEstadoTropa = new javax.swing.JLabel();
+        jLabel42 = new javax.swing.JLabel();
+        txtTipoNegocio = new javax.swing.JTextField();
+        jLabel43 = new javax.swing.JLabel();
+        jScrollPane7 = new javax.swing.JScrollPane();
+        txtObservacionesTropa = new javax.swing.JTextArea();
+        jLabel44 = new javax.swing.JLabel();
+        jLabel45 = new javax.swing.JLabel();
+        txtAnimalTropa = new javax.swing.JTextField();
+        btnAgregarAnimal = new javax.swing.JButton();
+        GuardarTropaAnimal = new javax.swing.JButton();
 
         jButton1.setText("jButton1");
 
@@ -1081,9 +1101,8 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
                             .addComponent(jLabel28))))
                 .addGap(25, 25, 25)
                 .addGroup(tblProductorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(tblProductorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel24)
-                        .addComponent(lblEstadoProductor))
+                    .addComponent(lblEstadoProductor)
+                    .addComponent(jLabel24)
                     .addGroup(tblProductorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel29)
                         .addComponent(chkSI)
@@ -1097,7 +1116,7 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
 
         tblmantenimientos.addTab("Productor", tblProductor);
 
-        jPanel1.setBackground(new java.awt.Color(101, 175, 84));
+        tblTropa.setBackground(new java.awt.Color(101, 175, 84));
 
         jLabel37.setFont(new java.awt.Font("Ubuntu", 1, 15)); // NOI18N
         jLabel37.setText("Fecha Ingreso:");
@@ -1109,15 +1128,26 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
         jLabel39.setText("Propietario:");
 
         jLabel40.setFont(new java.awt.Font("Ubuntu", 1, 15)); // NOI18N
-        jLabel40.setText("Animales:");
+        jLabel40.setText("Agregar uno:");
 
+        txtFechaIngreso.setText("ej: 10/01/11");
+        txtFechaIngreso.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                txtFechaIngresoMouseClicked(evt);
+            }
+        });
         txtFechaIngreso.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtFechaIngresoActionPerformed(evt);
             }
         });
+        txtFechaIngreso.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                txtFechaIngresoFocusGained(evt);
+            }
+        });
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cboPropietario.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         lblDocumento.setFont(new java.awt.Font("Ubuntu", 1, 15)); // NOI18N
         lblDocumento.setText(". . .");
@@ -1129,7 +1159,7 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
             }
         });
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tblAnimalesTropa.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
@@ -1137,62 +1167,178 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
 
             }
         ));
-        jScrollPane5.setViewportView(jTable1);
+        jScrollPane5.setViewportView(tblAnimalesTropa);
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        btnGuardarTropa.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Multimedia/save32.png"))); // NOI18N
+        btnGuardarTropa.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGuardarTropaActionPerformed(evt);
+            }
+        });
+
+        btnBuscarTropa.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Multimedia/search32.png"))); // NOI18N
+        btnBuscarTropa.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBuscarTropaActionPerformed(evt);
+            }
+        });
+
+        btnEliminarTropa.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Multimedia/delete32.png"))); // NOI18N
+        btnEliminarTropa.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEliminarTropaActionPerformed(evt);
+            }
+        });
+
+        jLabel41.setFont(new java.awt.Font("Ubuntu", 1, 15)); // NOI18N
+        jLabel41.setText("Estado:");
+
+        lblEstadoTropa.setFont(new java.awt.Font("Ubuntu", 1, 15)); // NOI18N
+        lblEstadoTropa.setText(". . .");
+
+        jLabel42.setFont(new java.awt.Font("Ubuntu", 1, 15)); // NOI18N
+        jLabel42.setText("Negocio:");
+
+        jLabel43.setFont(new java.awt.Font("Ubuntu", 1, 15)); // NOI18N
+        jLabel43.setText("Observaciones:");
+
+        txtObservacionesTropa.setColumns(20);
+        txtObservacionesTropa.setRows(5);
+        jScrollPane7.setViewportView(txtObservacionesTropa);
+
+        jLabel44.setFont(new java.awt.Font("Ubuntu", 1, 15)); // NOI18N
+        jLabel44.setText("Animales:");
+
+        jLabel45.setFont(new java.awt.Font("Ubuntu", 1, 15)); // NOI18N
+        jLabel45.setText("Agregar archivo:");
+
+        btnAgregarAnimal.setText("Buscar");
+        btnAgregarAnimal.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAgregarAnimalActionPerformed(evt);
+            }
+        });
+
+        GuardarTropaAnimal.setText("Guardar");
+        GuardarTropaAnimal.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                GuardarTropaAnimalActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout tblTropaLayout = new javax.swing.GroupLayout(tblTropa);
+        tblTropa.setLayout(tblTropaLayout);
+        tblTropaLayout.setHorizontalGroup(
+            tblTropaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(tblTropaLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 462, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(jPanel1Layout.createSequentialGroup()
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jLabel38)
-                                .addComponent(jLabel39))
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addGroup(jPanel1Layout.createSequentialGroup()
-                                    .addComponent(txtNtoTropa, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(tblTropaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, tblTropaLayout.createSequentialGroup()
+                        .addGroup(tblTropaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(tblTropaLayout.createSequentialGroup()
+                                .addComponent(jLabel40)
+                                .addGap(3, 3, 3)
+                                .addComponent(txtAnimalTropa))
+                            .addComponent(jLabel43)
+                            .addGroup(tblTropaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 336, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, tblTropaLayout.createSequentialGroup()
+                                    .addGroup(tblTropaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jLabel39)
+                                        .addComponent(jLabel38)
+                                        .addComponent(jLabel41))
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(jLabel37)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(txtFechaIngreso, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addComponent(jComboBox1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                        .addGroup(jPanel1Layout.createSequentialGroup()
-                            .addComponent(jLabel40)
-                            .addGap(29, 29, 29)
-                            .addComponent(btnAbrirDocumento)
-                            .addGap(18, 18, 18)
-                            .addComponent(lblDocumento))))
-                .addContainerGap(107, Short.MAX_VALUE))
+                                    .addGroup(tblTropaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addGroup(tblTropaLayout.createSequentialGroup()
+                                            .addComponent(lblEstadoTropa)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                            .addComponent(jLabel42)
+                                            .addGap(5, 5, 5)
+                                            .addComponent(txtTipoNegocio, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(cboPropietario, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addGroup(tblTropaLayout.createSequentialGroup()
+                                            .addComponent(txtNroTropa, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(jLabel37)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(txtFechaIngreso, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE))))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(tblTropaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(btnAgregarAnimal)
+                            .addGroup(tblTropaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addGroup(tblTropaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(btnBuscarTropa, javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(btnGuardarTropa, javax.swing.GroupLayout.Alignment.TRAILING))
+                                .addComponent(btnEliminarTropa))))
+                    .addGroup(tblTropaLayout.createSequentialGroup()
+                        .addGroup(tblTropaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel44)
+                            .addGroup(tblTropaLayout.createSequentialGroup()
+                                .addComponent(jLabel45)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnAbrirDocumento)
+                                .addGap(18, 18, 18)
+                                .addComponent(lblDocumento))
+                            .addGroup(tblTropaLayout.createSequentialGroup()
+                                .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 460, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(GuardarTropaAnimal)))
+                        .addGap(0, 3, Short.MAX_VALUE)))
+                .addGap(20, 20, 20))
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel38)
-                    .addComponent(txtNtoTropa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel37)
-                    .addComponent(txtFechaIngreso, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(50, 50, 50)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel39)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(50, 50, 50)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel40)
-                    .addComponent(lblDocumento)
-                    .addComponent(btnAbrirDocumento))
+        tblTropaLayout.setVerticalGroup(
+            tblTropaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(tblTropaLayout.createSequentialGroup()
+                .addGap(18, 18, 18)
+                .addGroup(tblTropaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(tblTropaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel38)
+                        .addComponent(txtNroTropa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel37)
+                        .addComponent(txtFechaIngreso, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnGuardarTropa))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(tblTropaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(tblTropaLayout.createSequentialGroup()
+                        .addGroup(tblTropaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel39)
+                            .addComponent(cboPropietario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(15, 15, 15)
+                        .addGroup(tblTropaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel41)
+                            .addComponent(lblEstadoTropa)
+                            .addComponent(jLabel42)
+                            .addComponent(txtTipoNegocio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(btnBuscarTropa))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(133, Short.MAX_VALUE))
+                .addGroup(tblTropaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel43)
+                    .addGroup(tblTropaLayout.createSequentialGroup()
+                        .addGap(13, 13, 13)
+                        .addComponent(btnEliminarTropa)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel44)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(tblTropaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel40)
+                    .addComponent(txtAnimalTropa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnAgregarAnimal))
+                .addGap(4, 4, 4)
+                .addGroup(tblTropaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblDocumento)
+                    .addComponent(btnAbrirDocumento)
+                    .addComponent(jLabel45))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(tblTropaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(tblTropaLayout.createSequentialGroup()
+                        .addComponent(GuardarTropaAnimal)
+                        .addGap(0, 59, Short.MAX_VALUE))
+                    .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
-        tblmantenimientos.addTab("Tropa", jPanel1);
+        tblmantenimientos.addTab("Tropa", tblTropa);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -1295,6 +1441,7 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
                 Object o = buscar(Animal.class, txtNroAnimal.getText());
                 if (o == null) {
                     a = new Animal();
+                    a.setFechaIng(new Date());
                     a.setPesoActual(Integer.parseInt(txtPesoIngAnimal.getText()));
                     a.setPesoIngreso(Integer.parseInt(txtPesoIngAnimal.getText()));
                 } else {
@@ -1563,8 +1710,7 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
         Dieta d = (Dieta) o;
 
         limpiar_tabla(mdlInsumosAsignados);
-        if (d
-                != null) {
+        if (d != null) {
             txtDuracionDieta.setText(Integer.toString(d.getDuracion()));
             cboTipoDieta.setSelectedItem(d.getTipo());
             lblEstadoDieta.setText(d.getEstado());
@@ -1810,25 +1956,121 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
     }//GEN-LAST:event_chkNoActionPerformed
 
     private void txtFechaIngresoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtFechaIngresoActionPerformed
-        // TODO add your handling code here:
     }//GEN-LAST:event_txtFechaIngresoActionPerformed
 
     private void btnAbrirDocumentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAbrirDocumentoActionPerformed
         JFileChooser jf = new JFileChooser();
         jf.showOpenDialog(null);
         File f = jf.getSelectedFile();
-        String filename = f.getAbsolutePath();
-        lblDocumento.setText(filename);
+        if (f.getAbsolutePath() != null) {
+            String filename = f.getAbsolutePath();
+            lblDocumento.setText(filename);
+        }
+
     }//GEN-LAST:event_btnAbrirDocumentoActionPerformed
 
+    private void btnGuardarTropaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarTropaActionPerformed
+        try {
+            if (txtNroTropa.getText().equals("")) {
+                JOptionPane.showMessageDialog(null, "Debe ingresar el numero de la tropa");
+            } else {
+                Tropa t;
+                Object o = buscar(Tropa.class, txtNroTropa.getText());
+                if (o == null) {
+                    t = new Tropa();
+                } else {
+                    t = (Tropa) o;
+                }
+                t.setEstado("ACTIVO");
+                t.setIdentificador(txtNroTropa.getText());
+                t.setPropietario((Productor) cboPropietario.getSelectedItem());
+                DateFormat df = new SimpleDateFormat("dd/mm/yy");
+                Date dt = df.parse(txtFechaIngreso.getText());
+                t.setFechaIngreso(dt);
+                t.setFechaSistema(new Date());
+                t.setTipoNegocio(txtTipoNegocio.getText());
+                t.setObservaciones(txtObservacionesTropa.getText());
+                if (o != null) {
+                    int seleccion = JOptionPane.showOptionDialog(null,
+                            "La tropa ya existe. Si continúa se modificaran los datos por los ingresados, en caso de estar INACTIVO se activará. \n ¿Desea continuar?",
+                            "Seleccione una opción", // Título
+                            JOptionPane.YES_NO_CANCEL_OPTION,
+                            JOptionPane.QUESTION_MESSAGE,
+                            null,
+                            new Object[]{"Si", "No"},
+                            "Si");
+                    if (seleccion == 0) {
+                        guardar(t);
+                    }
+                } else {
+                    guardar(t);
+                }
+            }
+            limpiarCampos(tblTropa);
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Ocurrio un error inesperado. \nPor favor verifique los datos ingresados");
+        }
+    }//GEN-LAST:event_btnGuardarTropaActionPerformed
+
+    private void btnBuscarTropaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarTropaActionPerformed
+        Tropa t = (Tropa) buscar(Tropa.class, txtNroTropa.getText());
+        limpiar_tabla(mdlAnimal);
+        if (t != null) {
+            DateFormat df = new SimpleDateFormat("DD/MM/YYYY");
+            String fecha = df.format(t.getFechaIngreso());
+            txtFechaIngreso.setText(fecha);
+            cboPropietario.setSelectedItem(t.getPropietario());
+            lblEstadoTropa.setText(t.getEstado());
+            txtTipoNegocio.setText(t.getTipoNegocio());
+            txtObservacionesTropa.setText(t.getObservaciones());
+            List<TropaAnimal> animales = FachadaPersistencia.getInstancia().listarAnimales(t);
+            for (TropaAnimal aux : animales) {
+                mdlAnimal.addRow(new Object[]{aux.getAnimal().getNroCaravana(), aux.getAnimal().getPesoActual(), 0});
+                tblAnimalesTropa.setModel(mdlAnimal);
+            }
+        } else {
+            JOptionPane.showMessageDialog(rootPane, "No se ha encontrado ninguna tropa con el numero:" + txtNroTropa.getText() + ".\nPor favor verifiquelo.");
+        }
+    }//GEN-LAST:event_btnBuscarTropaActionPerformed
+
+    private void btnEliminarTropaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarTropaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnEliminarTropaActionPerformed
+
+    private void txtFechaIngresoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtFechaIngresoMouseClicked
+    }//GEN-LAST:event_txtFechaIngresoMouseClicked
+
+    private void txtFechaIngresoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtFechaIngresoFocusGained
+        txtFechaIngreso.setText("");
+    }//GEN-LAST:event_txtFechaIngresoFocusGained
+
+    private void btnAgregarAnimalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarAnimalActionPerformed
+        Object o = buscar(Animal.class, txtAnimalTropa.getText());
+        Animal a = (Animal) o;
+        if (a != null) {
+            tblAnimalesTropa.setModel(mdlAnimal);
+            mdlAnimal.addRow(new Object[]{a.getNroCaravana(), a.getPesoActual(), 0});
+        } else {
+            JOptionPane.showMessageDialog(null, "No se ha encontrado ningun animal con el numero de caravana:" + txtNroAnimal.getText() + ".\nPor favor verifiquelo.");
+        }
+        txtAnimalTropa.setText("");
+    }//GEN-LAST:event_btnAgregarAnimalActionPerformed
+
+    private void GuardarTropaAnimalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_GuardarTropaAnimalActionPerformed
+        GuardarAnimalesTropa();
+    }//GEN-LAST:event_GuardarTropaAnimalActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton GuardarTropaAnimal;
     private javax.swing.JButton btnAbrirDocumento;
+    private javax.swing.JButton btnAgregarAnimal;
     private javax.swing.JButton btnBuscarAnimal;
     private javax.swing.JButton btnBuscarCategoria;
     private javax.swing.JButton btnBuscarCorral;
     private javax.swing.JButton btnBuscarInsumo;
     private javax.swing.JButton btnBuscarProductor;
     private javax.swing.JButton btnBuscarStock;
+    private javax.swing.JButton btnBuscarTropa;
     private javax.swing.JButton btnBuscatDieta;
     private javax.swing.JButton btnEgresoStock;
     private javax.swing.JButton btnEliminarAnimal;
@@ -1837,23 +2079,25 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
     private javax.swing.JButton btnEliminarDieta;
     private javax.swing.JButton btnEliminarInsumo;
     private javax.swing.JButton btnEliminarProductor;
+    private javax.swing.JButton btnEliminarTropa;
     private javax.swing.JButton btnGuardarAnimal;
     private javax.swing.JButton btnGuardarCategoria;
     private javax.swing.JButton btnGuardarCorral;
     private javax.swing.JButton btnGuardarDieta;
     private javax.swing.JButton btnGuardarInsumo;
     private javax.swing.JButton btnGuardarProductor;
+    private javax.swing.JButton btnGuardarTropa;
     private javax.swing.JButton btnIngresoStock;
     private javax.swing.JButton btnRestarInsumo;
     private javax.swing.JButton btnSumarInsumo;
     private javax.swing.JComboBox cboCategoriaAnimal;
     private javax.swing.JComboBox cboPosibles;
     private javax.swing.JComboBox cboProductor;
+    private javax.swing.JComboBox cboPropietario;
     private javax.swing.JComboBox cboTipoDieta;
     private javax.swing.JCheckBox chkNo;
     private javax.swing.JCheckBox chkSI;
     private javax.swing.JButton jButton1;
-    private javax.swing.JComboBox jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -1889,19 +2133,23 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
     private javax.swing.JLabel jLabel39;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel40;
+    private javax.swing.JLabel jLabel41;
+    private javax.swing.JLabel jLabel42;
+    private javax.swing.JLabel jLabel43;
+    private javax.swing.JLabel jLabel44;
+    private javax.swing.JLabel jLabel45;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JScrollPane jScrollPane6;
-    private javax.swing.JTable jTable1;
+    private javax.swing.JScrollPane jScrollPane7;
     private javax.swing.JLabel lblDocumento;
     private javax.swing.JLabel lblEstadoAnimal;
     private javax.swing.JLabel lblEstadoCategoria;
@@ -1909,8 +2157,10 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
     private javax.swing.JLabel lblEstadoDieta;
     private javax.swing.JLabel lblEstadoInsumo;
     private javax.swing.JLabel lblEstadoProductor;
+    private javax.swing.JLabel lblEstadoTropa;
     private javax.swing.JLabel lblStockActual;
     private javax.swing.JPanel tblAnimal;
+    private javax.swing.JTable tblAnimalesTropa;
     private javax.swing.JPanel tblCategoria;
     private javax.swing.JPanel tblCorral;
     private javax.swing.JPanel tblDieta;
@@ -1918,7 +2168,9 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
     private javax.swing.JTable tblInsumos;
     private javax.swing.JPanel tblProductor;
     private javax.swing.JPanel tblStock;
+    private javax.swing.JPanel tblTropa;
     private javax.swing.JTabbedPane tblmantenimientos;
+    private javax.swing.JTextField txtAnimalTropa;
     private javax.swing.JTextField txtCapacidadCorral;
     private javax.swing.JTextField txtDiasCategoria;
     private javax.swing.JTextField txtDicose;
@@ -1935,16 +2187,18 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
     private javax.swing.JTextField txtNombreInsumo;
     private javax.swing.JTextField txtNombreProductor;
     private javax.swing.JTextField txtNroAnimal;
-    private javax.swing.JTextField txtNtoTropa;
+    private javax.swing.JTextField txtNroTropa;
     private javax.swing.JTextArea txtObservacionesCategoria;
     private javax.swing.JTextArea txtObservacionesCorral;
     private javax.swing.JTextArea txtObservacionesProductor;
     private javax.swing.JTextPane txtObservacionesStock;
+    private javax.swing.JTextArea txtObservacionesTropa;
     private javax.swing.JTextField txtPesoActAnimal;
     private javax.swing.JTextField txtPesoIngAnimal;
     private javax.swing.JTextField txtPorcentaje;
     private javax.swing.JTextField txtPrecioInsumo;
     private javax.swing.JTextField txtTelefonoProductor;
+    private javax.swing.JTextField txtTipoNegocio;
     // End of variables declaration//GEN-END:variables
 
     public static Object guardar(Object object) {
@@ -1962,10 +2216,12 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
     DefaultComboBoxModel<Object> mdcProductor = new DefaultComboBoxModel<>();
     DefaultComboBoxModel<Object> mdcCategoria = new DefaultComboBoxModel<>();
     DefaultComboBoxModel<Object> mdcTipoDieta = new DefaultComboBoxModel<>();
+    DefaultTableModel mdlAnimal = new DefaultTableModel(new String[]{"Nro Caravana", "Peso actual"}, 0);
 
     private void cargar_combos() {
         mdcProductor.removeAllElements();
         cboProductor.setModel(mdcProductor);
+        cboPropietario.setModel(mdcProductor);
         cboProductor.setSelectedItem(null);
         List<Object> productores = FachadaPersistencia.getInstancia().listadoHabilitados(Productor.class);
         for (Object o : productores) {
@@ -2151,6 +2407,33 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
             chkNo.setSelected(false);
         } else if (check == chkNo) {
             chkSI.setSelected(false);
+        }
+    }
+
+    private Object buscarMayor(Object o) {
+        Object obj = new Object();
+        obj = Persistencia.FachadaPersistencia.getInstancia().buscarMayor(o);
+        return obj;
+    }
+
+    private void GuardarAnimalesTropa() {
+        try {
+            if (!txtNroTropa.getText().equals("")) {
+                for (int i = 0; i < mdlAnimal.getRowCount(); i++) {
+                    TropaAnimal ta = new TropaAnimal();
+                    String caravana = Integer.toString((Integer) mdlAnimal.getValueAt(i, 0));
+                    Animal animal = (Animal) FachadaPersistencia.getInstancia().buscar(Animal.class, caravana);
+                    Tropa tropa = (Tropa) FachadaPersistencia.getInstancia().buscar(Tropa.class, txtNroTropa.getText());
+                    ta.setAnimal(animal);
+                    DateFormat df = new SimpleDateFormat("dd/mm/yy");
+                    Date dt = df.parse(txtFechaIngreso.getText());
+                    ta.setFechaIng(dt);
+                    ta.setTropa(tropa);
+                    guardar(ta);
+                }
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Ocurrio un error inesperado. Por Favor verifique los datos");
         }
     }
 }

@@ -16,6 +16,7 @@ import java.util.Observer;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
@@ -389,7 +390,6 @@ public class Listados extends javax.swing.JInternalFrame {
     private void chFiltroCorralActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chFiltroCorralActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_chFiltroCorralActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnListarAnimal;
     private javax.swing.JButton btnListarCorral;
@@ -484,18 +484,27 @@ public class Listados extends javax.swing.JInternalFrame {
         t.getColumnModel().getColumn(0).setMaxWidth(50);
         if (obj == Corral.class) {
             lista = FachadaPersistencia.getInstancia().listadoHabilitados(Corral.class);
+            if (lista.size() == 0) {
+                JOptionPane.showMessageDialog(null, "No existen corrales para listar.");
+            }
             for (Object o : lista) {
                 Corral c = (Corral) o;
                 d.addRow(new Object[]{c.getId(), c.getNombre(), c.getCapacidad(), c.getObservaciones(), c.getEstado()});
             }
         } else if (obj == Animal.class) {
             lista = FachadaPersistencia.getInstancia().listadoHabilitados(Animal.class);
+            if (lista.size() == 0) {
+                JOptionPane.showMessageDialog(null, "No existen animales para listar.");
+            }
             for (Object o : lista) {
                 Animal a = (Animal) o;
                 d.addRow(new Object[]{a.getId(), a.getNroCaravana(), a.getPesoActual(), a.getEstado(), a.getProductor().getNombre()});
             }
         } else if (obj == Productor.class) {
             lista = FachadaPersistencia.getInstancia().listadoHabilitados(Productor.class);
+            if (lista.size() == 0) {
+                JOptionPane.showMessageDialog(null, "No existen productores para listar.");
+            }
             for (Object o : lista) {
                 Productor p = (Productor) o;
                 String aux;
@@ -508,18 +517,22 @@ public class Listados extends javax.swing.JInternalFrame {
             }
         } else if (obj == Dieta.class) {
             lista = FachadaPersistencia.getInstancia().listadoHabilitados(Dieta.class);
+            if (lista.size() == 0) {
+                JOptionPane.showMessageDialog(null, "No existen dietas para listar.");
+            }
             for (Object o : lista) {
                 Dieta dt = (Dieta) o;
                 d.addRow(new Object[]{dt.getId(), dt.getNombre(), dt.getTipo(), dt.getCosto(), dt.getEstado()});
             }
         } else if (obj == Insumo.class) {
             lista = FachadaPersistencia.getInstancia().listadoHabilitados(Insumo.class);
+            if (lista.size() == 0) {
+                JOptionPane.showMessageDialog(null, "No existen insumos para listar.");
+            }
             for (Object o : lista) {
                 Insumo i = (Insumo) o;
                 d.addRow(new Object[]{i.getId(), i.getNombre(), i.getStock(), i.getHumedad(), i.getEstado()});
             }
         }
     }
-
-  
 }

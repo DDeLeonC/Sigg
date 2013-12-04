@@ -5,6 +5,7 @@
 package dominio;
 
 import java.io.Serializable;
+import java.sql.Date;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -13,6 +14,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.Temporal;
 
 /**
  *
@@ -20,27 +22,62 @@ import javax.persistence.ManyToOne;
  */
 @Entity
 public class CorralAnimal implements Serializable {
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-@Basic(optional = false)
-    @Column(name = "observaciones")
-    private java.sql.Date observaciones;
-    @Basic(optional = false)
-    @Column(name = "estado")
-    private String estado;
     @ManyToOne(cascade = CascadeType.ALL)
     private Corral corral;
     @ManyToOne(cascade = CascadeType.ALL)
     private Animal animal;
-    
+    @Basic(optional = false)
+    @Temporal(javax.persistence.TemporalType.DATE)
+    @Column(name = "fechaIngreso")
+    private java.util.Date fechaIng;
+    @Basic(optional = true)
+    @Temporal(javax.persistence.TemporalType.DATE)
+    @Column(name = "fechaEgreso")
+    private java.util.Date fechaEgr;
+
     public Long getId() {
         return id;
     }
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Corral getCorral() {
+        return corral;
+    }
+
+    public void setCorral(Corral corral) {
+        this.corral = corral;
+    }
+
+    public Animal getAnimal() {
+        return animal;
+    }
+
+    public void setAnimal(Animal animal) {
+        this.animal = animal;
+    }
+
+    public java.util.Date getFechaIng() {
+        return fechaIng;
+    }
+
+    public void setFechaIng(java.util.Date fechaIng) {
+        this.fechaIng = fechaIng;
+    }
+
+    public java.util.Date getFechaEgr() {
+        return fechaEgr;
+    }
+
+    public void setFechaEgr(java.util.Date fechaEgr) {
+        this.fechaEgr = fechaEgr;
     }
 
     @Override
@@ -67,5 +104,4 @@ public class CorralAnimal implements Serializable {
     public String toString() {
         return "dominio.CorralTropa[ id=" + id + " ]";
     }
-    
 }

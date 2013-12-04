@@ -104,7 +104,7 @@ public class Corral implements Serializable {
 
     @Override
     public String toString() {
-        return "Id: " + id + " - "+nombre;
+        return nombre + " - Capacidad: "+capacidad;
     }
     
 }

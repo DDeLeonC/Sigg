@@ -70,7 +70,7 @@ public class FachadaPersistenciaTest {
         obj.setEstado("ACTIVO");
         obj.setNroCaravana(123498765);
         obj.setPesoIngreso(150);
-        obj = (Animal) FachadaPersistencia.getInstancia().Guardar(obj);
+        obj = (Animal) FachadaPersistencia.getInstancia().Guardar(obj, false);
         Animal expResult = obj;
         Animal result = (Animal) FachadaPersistencia.getInstancia().buscar(Animal.class, Integer.toString(123498765));
         assertEquals(expResult, result);
@@ -93,7 +93,7 @@ public class FachadaPersistenciaTest {
         obj.setEstado("ACTIVO");
         obj.setNroCaravana(4321);
         obj.setPesoIngreso(150);
-        obj = (Animal) FachadaPersistencia.getInstancia().Guardar(obj);
+        obj = (Animal) FachadaPersistencia.getInstancia().Guardar(obj, false);
         Animal expResult = obj;
         Animal result = (Animal) FachadaPersistencia.getInstancia().buscar(Animal.class, Integer.toString(4321));
         assertEquals(expResult, result);
@@ -134,7 +134,7 @@ public class FachadaPersistenciaTest {
         obj.setEstado("ACTIVO");
         obj.setNombre("Arroz");
         obj.setHumedad(25);
-        obj = (Insumo) FachadaPersistencia.getInstancia().Guardar(obj);
+        obj = (Insumo) FachadaPersistencia.getInstancia().Guardar(obj, false);
         Insumo expResult = obj;
         Insumo result = (Insumo) FachadaPersistencia.getInstancia().buscarId(Insumo.class, obj.getId());
         assertEquals(expResult, result);

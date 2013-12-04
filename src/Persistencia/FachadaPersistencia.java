@@ -9,12 +9,14 @@ import dominio.Animal;
 import dominio.CambioStock;
 import dominio.CategoriaAnimal;
 import dominio.Corral;
+import dominio.CorralAnimal;
 import dominio.DetalleDieta;
 import dominio.Dieta;
 import dominio.Insumo;
 import dominio.Productor;
 import dominio.Tropa;
 import dominio.TropaAnimal;
+import java.util.Date;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
@@ -80,7 +82,7 @@ public class FachadaPersistencia extends Observable {
     //hacer dos guardar con el mismo nombre solo que uno tenga mas parametros y hace la poarte de transaction
     //el commit lo debe hacer despues que termine la transaction
 
-    public Object Guardar(Object obj/*Transaction tx*/) {
+    public Object Guardar(Object obj, Boolean msj/*Transaction tx*/) {
         //if (tx==null {
         em.getTransaction().begin();
         //tx.gettransaction.begin();
@@ -90,11 +92,13 @@ public class FachadaPersistencia extends Observable {
         try {
             obj = em.merge(obj);
             em.getTransaction().commit();
-            if (obj.getClass() != DetalleDieta.class && obj.getClass() != CambioStock.class) {
+            //if (obj.getClass() != DetalleDieta.class && obj.getClass() != CambioStock.class && obj.getClass() != CorralAnimal.class) {
+            if (msj == true) {
                 JOptionPane.showMessageDialog(null, "La operacion se realizo con éxito.");
             }
         } catch (Exception e) {
-            if (obj != DetalleDieta.class && obj.getClass() != CambioStock.class) {
+            //  if (obj != DetalleDieta.class && obj.getClass() != CambioStock.class && obj.getClass() != CorralAnimal.class) {
+            if (msj == true) {
                 JOptionPane.showMessageDialog(null, "No se logro guardar los datos ingresados. \n Por Favor verifiquelos.");
             }
             e.printStackTrace();
@@ -243,5 +247,37 @@ public class FachadaPersistencia extends Observable {
         List<TropaAnimal> lista = null;
         lista = em.createQuery("select ta from TropaAnimal ta where ta.tropa=:tropa").setParameter("tropa", t).getResultList();
         return lista;
+    }
+
+    //esta funcio iria en persistencia de animal
+    public Corral buscarCorralActual(Animal a) {
+        Corral corralActual = new Corral();
+        CorralAnimal corral;
+        try {
+            corral = buscarCorralAnimal(a);
+            if (corral != null) {
+                corralActual = (Corral) em.createQuery("SELECT c FROM Corral c WHERE c.id=:idCorral").setParameter("idCorral", corral.getCorral().getId()).getSingleResult();
+            }
+        } catch (NoResultException nre) {
+            corralActual = null;
+        }
+        return corralActual;
+    }
+
+    public CorralAnimal buscarCorralAnimal(Animal a) {
+        CorralAnimal idCorral = new CorralAnimal();
+        try {
+            idCorral = (CorralAnimal) em.createQuery("Select c from CorralAnimal c where c.animal=:aux and c.fechaEgr=null").setParameter("aux", a).getSingleResult();
+        } catch (NoResultException nre) {
+            idCorral = null;
+        }
+        return idCorral;
+    }
+
+    public List<Animal> listarporfecha(Date desde, Date hasta) {
+        List<Animal> animales = null;
+
+        animales = (List<Animal>) em.createQuery("SELECT a from Animal a where a.fechaIng>:hasta OR a.fechaEgr<:desde").setParameter(":desde", desde).setParameter(":hasta", hasta);
+        return animales;
     }
 }

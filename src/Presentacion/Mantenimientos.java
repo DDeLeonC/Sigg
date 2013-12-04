@@ -25,13 +25,20 @@ import javax.swing.table.DefaultTableModel;
 import dominio.CambioStock;
 import dominio.Tropa;
 import dominio.TropaAnimal;
+import java.awt.Image;
 import java.awt.TextField;
 import java.io.File;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
@@ -40,6 +47,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import org.hibernate.cfg.annotations.reflection.XMLContext;
 
 /**
  *
@@ -52,8 +60,7 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
      */
     public Mantenimientos() {
         initComponents();
-        cargar_combos();
-        cargar_listas();
+        cargarCombos();
         txtNroTropa.setText(Integer.toString(Integer.parseInt((String) buscarMayor(Tropa.class)) + 1));
         FachadaPersistencia.getInstancia().addObserver(this);
     }
@@ -81,6 +88,7 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
         jLabel20 = new javax.swing.JLabel();
         lblEstadoInsumo = new javax.swing.JLabel();
         txtPrecioInsumo = new javax.swing.JTextField();
+        jLabel46 = new javax.swing.JLabel();
         tblCorral = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -112,7 +120,7 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
         txtInsumoStock = new javax.swing.JTextField();
         jLabel32 = new javax.swing.JLabel();
         jLabel33 = new javax.swing.JLabel();
-        txtModificacionStock = new javax.swing.JTextField();
+        txtIngreso = new javax.swing.JTextField();
         btnEgresoStock = new javax.swing.JButton();
         btnIngresoStock = new javax.swing.JButton();
         jLabel34 = new javax.swing.JLabel();
@@ -120,6 +128,8 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
         txtObservacionesStock = new javax.swing.JTextPane();
         lblStockActual = new javax.swing.JLabel();
         btnBuscarStock = new javax.swing.JButton();
+        jLabel47 = new javax.swing.JLabel();
+        txtEgreso = new javax.swing.JTextField();
         tblAnimal = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
@@ -136,26 +146,6 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
         jLabel26 = new javax.swing.JLabel();
         cboCategoriaAnimal = new javax.swing.JComboBox();
         cboProductor = new javax.swing.JComboBox();
-        tblDieta = new javax.swing.JPanel();
-        jLabel13 = new javax.swing.JLabel();
-        jLabel14 = new javax.swing.JLabel();
-        jLabel15 = new javax.swing.JLabel();
-        txtNombreDieta = new javax.swing.JTextField();
-        btnGuardarDieta = new javax.swing.JButton();
-        btnBuscatDieta = new javax.swing.JButton();
-        btnEliminarDieta = new javax.swing.JButton();
-        jLabel16 = new javax.swing.JLabel();
-        lblEstadoDieta = new javax.swing.JLabel();
-        cboTipoDieta = new javax.swing.JComboBox();
-        txtDuracionDieta = new javax.swing.JTextField();
-        btnSumarInsumo = new javax.swing.JButton();
-        btnRestarInsumo = new javax.swing.JButton();
-        cboPosibles = new javax.swing.JComboBox();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        tblInsumos = new javax.swing.JTable();
-        txtPorcentaje = new javax.swing.JTextField();
-        jLabel30 = new javax.swing.JLabel();
-        jLabel35 = new javax.swing.JLabel();
         tblProductor = new javax.swing.JPanel();
         jLabel21 = new javax.swing.JLabel();
         jLabel22 = new javax.swing.JLabel();
@@ -205,6 +195,30 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
         txtAnimalTropa = new javax.swing.JTextField();
         btnAgregarAnimal = new javax.swing.JButton();
         GuardarTropaAnimal = new javax.swing.JButton();
+        jPanel1 = new javax.swing.JPanel();
+        jLabel48 = new javax.swing.JLabel();
+        txtEjemplo = new javax.swing.JTextField();
+        jButton2 = new javax.swing.JButton();
+        tblDieta = new javax.swing.JPanel();
+        jLabel13 = new javax.swing.JLabel();
+        jLabel14 = new javax.swing.JLabel();
+        jLabel15 = new javax.swing.JLabel();
+        txtNombreDieta = new javax.swing.JTextField();
+        btnGuardarDieta = new javax.swing.JButton();
+        btnBuscatDieta = new javax.swing.JButton();
+        btnEliminarDieta = new javax.swing.JButton();
+        jLabel16 = new javax.swing.JLabel();
+        lblEstadoDieta = new javax.swing.JLabel();
+        cboTipoDieta = new javax.swing.JComboBox();
+        txtDuracionDieta = new javax.swing.JTextField();
+        btnSumarInsumo = new javax.swing.JButton();
+        btnRestarInsumo = new javax.swing.JButton();
+        cboPosibles = new javax.swing.JComboBox();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        tblInsumos = new javax.swing.JTable();
+        txtPorcentaje = new javax.swing.JTextField();
+        jLabel30 = new javax.swing.JLabel();
+        jLabel35 = new javax.swing.JLabel();
 
         jButton1.setText("jButton1");
 
@@ -224,7 +238,7 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
         jLabel18.setText("Húmedad (%):");
 
         jLabel19.setFont(new java.awt.Font("Ubuntu", 1, 15)); // NOI18N
-        jLabel19.setText("Precio (U$S/Tonelada):");
+        jLabel19.setText("Precio:");
 
         btnGuardarInsumo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Multimedia/save32.png"))); // NOI18N
         btnGuardarInsumo.addActionListener(new java.awt.event.ActionListener() {
@@ -253,6 +267,9 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
         lblEstadoInsumo.setFont(new java.awt.Font("Ubuntu", 1, 15)); // NOI18N
         lblEstadoInsumo.setText("...");
 
+        jLabel46.setFont(new java.awt.Font("Ubuntu", 1, 12)); // NOI18N
+        jLabel46.setText("(U$S/Tonelada)");
+
         javax.swing.GroupLayout tblInsumoLayout = new javax.swing.GroupLayout(tblInsumo);
         tblInsumo.setLayout(tblInsumoLayout);
         tblInsumoLayout.setHorizontalGroup(
@@ -261,22 +278,24 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
                 .addContainerGap()
                 .addGroup(tblInsumoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(tblInsumoLayout.createSequentialGroup()
-                        .addComponent(jLabel19)
-                        .addGap(18, 18, 18)
-                        .addComponent(txtPrecioInsumo, javax.swing.GroupLayout.DEFAULT_SIZE, 281, Short.MAX_VALUE))
-                    .addGroup(tblInsumoLayout.createSequentialGroup()
-                        .addComponent(jLabel17)
-                        .addGap(18, 18, 18)
-                        .addComponent(txtNombreInsumo))
-                    .addGroup(tblInsumoLayout.createSequentialGroup()
-                        .addComponent(jLabel20)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(lblEstadoInsumo)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(tblInsumoLayout.createSequentialGroup()
                         .addComponent(jLabel18)
                         .addGap(18, 18, 18)
-                        .addComponent(txtHumedadInsumo)))
+                        .addComponent(txtHumedadInsumo, javax.swing.GroupLayout.DEFAULT_SIZE, 346, Short.MAX_VALUE))
+                    .addGroup(tblInsumoLayout.createSequentialGroup()
+                        .addComponent(jLabel17)
+                        .addGap(58, 58, 58)
+                        .addComponent(txtNombreInsumo))
+                    .addGroup(tblInsumoLayout.createSequentialGroup()
+                        .addGroup(tblInsumoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel19)
+                            .addComponent(jLabel46)
+                            .addComponent(jLabel20))
+                        .addGap(29, 29, 29)
+                        .addGroup(tblInsumoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(tblInsumoLayout.createSequentialGroup()
+                                .addComponent(lblEstadoInsumo, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 235, Short.MAX_VALUE))
+                            .addComponent(txtPrecioInsumo))))
                 .addGap(18, 18, 18)
                 .addGroup(tblInsumoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnGuardarInsumo)
@@ -301,16 +320,22 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
                     .addComponent(btnBuscarInsumo))
                 .addGap(34, 34, 34)
                 .addGroup(tblInsumoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(tblInsumoLayout.createSequentialGroup()
-                        .addGroup(tblInsumoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addGroup(tblInsumoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(tblInsumoLayout.createSequentialGroup()
+                            .addComponent(txtPrecioInsumo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGroup(tblInsumoLayout.createSequentialGroup()
                             .addComponent(jLabel19)
-                            .addComponent(txtPrecioInsumo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(50, 50, 50)
-                        .addGroup(tblInsumoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel20)
-                            .addComponent(lblEstadoInsumo)))
-                    .addComponent(btnEliminarInsumo))
-                .addContainerGap(180, Short.MAX_VALUE))
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel46)
+                            .addGap(45, 45, 45)))
+                    .addGroup(tblInsumoLayout.createSequentialGroup()
+                        .addComponent(btnEliminarInsumo)
+                        .addGap(31, 31, 31)))
+                .addGroup(tblInsumoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel20)
+                    .addComponent(lblEstadoInsumo))
+                .addContainerGap(174, Short.MAX_VALUE))
         );
 
         tblmantenimientos.addTab("Insumo", tblInsumo);
@@ -364,22 +389,21 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
             .addGroup(tblCorralLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(tblCorralLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jScrollPane1)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 525, Short.MAX_VALUE)
                     .addGroup(tblCorralLayout.createSequentialGroup()
-                        .addGroup(tblCorralLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(tblCorralLayout.createSequentialGroup()
-                                .addComponent(jLabel2)
-                                .addGap(18, 18, 18)
-                                .addComponent(txtCapacidadCorral))
+                        .addGroup(tblCorralLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel3)
                             .addGroup(tblCorralLayout.createSequentialGroup()
-                                .addComponent(jLabel4)
-                                .addGap(27, 27, 27)
-                                .addComponent(lblEstadoCorral))
-                            .addGroup(tblCorralLayout.createSequentialGroup()
-                                .addComponent(jLabel1)
+                                .addGroup(tblCorralLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel2)
+                                    .addComponent(jLabel1)
+                                    .addComponent(jLabel4))
                                 .addGap(18, 18, 18)
-                                .addComponent(txtNombreCorral, javax.swing.GroupLayout.PREFERRED_SIZE, 384, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGroup(tblCorralLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(lblEstadoCorral)
+                                    .addGroup(tblCorralLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(txtNombreCorral)
+                                        .addComponent(txtCapacidadCorral, javax.swing.GroupLayout.DEFAULT_SIZE, 367, Short.MAX_VALUE)))))
                         .addGap(18, 18, 18)
                         .addGroup(tblCorralLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(btnEliminarCorral)
@@ -472,24 +496,21 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
                     .addComponent(jLabel11)
                     .addGroup(tblCategoriaLayout.createSequentialGroup()
                         .addGroup(tblCategoriaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(tblCategoriaLayout.createSequentialGroup()
-                                .addComponent(jLabel12)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(lblEstadoCategoria))
-                            .addGroup(tblCategoriaLayout.createSequentialGroup()
-                                .addComponent(jLabel10)
-                                .addGap(18, 18, 18)
-                                .addComponent(txtDiasCategoria, javax.swing.GroupLayout.PREFERRED_SIZE, 411, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(tblCategoriaLayout.createSequentialGroup()
-                                .addComponent(jLabel9)
-                                .addGap(18, 18, 18)
-                                .addComponent(txtNombreCategoria, javax.swing.GroupLayout.PREFERRED_SIZE, 385, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(jLabel9)
+                            .addComponent(jLabel10)
+                            .addComponent(jLabel12))
+                        .addGap(18, 18, 18)
+                        .addGroup(tblCategoriaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblEstadoCategoria)
+                            .addGroup(tblCategoriaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(txtDiasCategoria)
+                                .addComponent(txtNombreCategoria, javax.swing.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE)))
                         .addGap(18, 18, 18)
                         .addGroup(tblCategoriaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(btnGuardarCategoria)
                             .addComponent(btnEliminarCategoria)
                             .addComponent(btnBuscarCategoria)))
-                    .addComponent(jScrollPane3))
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 526, Short.MAX_VALUE))
                 .addContainerGap(43, Short.MAX_VALUE))
         );
         tblCategoriaLayout.setVerticalGroup(
@@ -528,26 +549,20 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
         jLabel31.setFont(new java.awt.Font("Ubuntu", 1, 15)); // NOI18N
         jLabel31.setText("Insumo:");
 
-        txtInsumoStock.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtInsumoStockActionPerformed(evt);
-            }
-        });
-
         jLabel32.setFont(new java.awt.Font("Ubuntu", 1, 15)); // NOI18N
         jLabel32.setText("Stock Actual:");
 
         jLabel33.setFont(new java.awt.Font("Ubuntu", 1, 15)); // NOI18N
-        jLabel33.setText("Modificación:");
+        jLabel33.setText("Ingresa:");
 
-        btnEgresoStock.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Multimedia/prohibit32.png"))); // NOI18N
+        btnEgresoStock.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Multimedia/Flaticon_3446 (1).png"))); // NOI18N
         btnEgresoStock.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnEgresoStockActionPerformed(evt);
             }
         });
 
-        btnIngresoStock.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Multimedia/add32.png"))); // NOI18N
+        btnIngresoStock.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Multimedia/Flaticon_186 (1).png"))); // NOI18N
         btnIngresoStock.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnIngresoStockActionPerformed(evt);
@@ -569,6 +584,9 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
             }
         });
 
+        jLabel47.setFont(new java.awt.Font("Ubuntu", 1, 15)); // NOI18N
+        jLabel47.setText("Egresa:");
+
         javax.swing.GroupLayout tblStockLayout = new javax.swing.GroupLayout(tblStock);
         tblStock.setLayout(tblStockLayout);
         tblStockLayout.setHorizontalGroup(
@@ -578,30 +596,35 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
                 .addGroup(tblStockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jScrollPane4)
                     .addGroup(tblStockLayout.createSequentialGroup()
+                        .addGap(16, 16, 16)
                         .addGroup(tblStockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(tblStockLayout.createSequentialGroup()
-                                .addGroup(tblStockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jLabel31)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txtInsumoStock))
+                            .addGroup(tblStockLayout.createSequentialGroup()
+                                .addGroup(tblStockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addGroup(tblStockLayout.createSequentialGroup()
                                         .addComponent(jLabel32)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addGap(18, 18, 18)
                                         .addComponent(lblStockActual))
-                                    .addComponent(jLabel34))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addGroup(tblStockLayout.createSequentialGroup()
-                                .addGroup(tblStockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(tblStockLayout.createSequentialGroup()
-                                        .addComponent(jLabel31)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 30, Short.MAX_VALUE)
-                                        .addComponent(txtInsumoStock, javax.swing.GroupLayout.PREFERRED_SIZE, 378, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, tblStockLayout.createSequentialGroup()
                                         .addComponent(jLabel33)
-                                        .addGap(19, 19, 19)
-                                        .addComponent(txtModificacionStock)))
-                                .addGap(22, 22, 22)))
-                        .addGroup(tblStockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btnIngresoStock)
-                            .addComponent(btnBuscarStock)
-                            .addComponent(btnEgresoStock))))
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(txtIngreso, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGap(26, 26, 26)
+                                .addComponent(btnIngresoStock)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel47)
+                                .addGap(8, 8, 8)
+                                .addComponent(txtEgreso, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
+                                .addComponent(btnEgresoStock)))
+                        .addGap(18, 18, 18)
+                        .addComponent(btnBuscarStock))
+                    .addGroup(tblStockLayout.createSequentialGroup()
+                        .addComponent(jLabel34)
+                        .addGap(373, 373, 373)))
                 .addGap(40, 40, 40))
         );
         tblStockLayout.setVerticalGroup(
@@ -613,24 +636,29 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
                         .addComponent(jLabel31)
                         .addComponent(txtInsumoStock, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(btnBuscarStock))
-                .addGap(34, 34, 34)
-                .addGroup(tblStockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(tblStockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel32)
-                        .addComponent(lblStockActual))
-                    .addComponent(btnIngresoStock))
-                .addGap(34, 34, 34)
                 .addGroup(tblStockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(tblStockLayout.createSequentialGroup()
+                        .addGap(112, 112, 112)
+                        .addGroup(tblStockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btnEgresoStock)
+                            .addGroup(tblStockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(jLabel47)
+                                .addComponent(txtEgreso, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(btnIngresoStock)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, tblStockLayout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(tblStockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel32)
+                            .addComponent(lblStockActual))
+                        .addGap(60, 60, 60)
                         .addGroup(tblStockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel33)
-                            .addComponent(txtModificacionStock, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(50, 50, 50)
-                        .addComponent(jLabel34))
-                    .addComponent(btnEgresoStock))
+                            .addComponent(txtIngreso, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addGap(34, 34, 34)
+                .addComponent(jLabel34)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(63, Short.MAX_VALUE))
+                .addContainerGap(79, Short.MAX_VALUE))
         );
 
         tblmantenimientos.addTab("Stock", tblStock);
@@ -695,60 +723,61 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
                             .addComponent(jLabel25)
                             .addComponent(jLabel26)
                             .addComponent(jLabel8))
-                        .addGap(30, 30, 30)
                         .addGroup(tblAnimalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lblEstadoAnimal)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, tblAnimalLayout.createSequentialGroup()
-                                .addGroup(tblAnimalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(cboCategoriaAnimal, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addGroup(tblAnimalLayout.createSequentialGroup()
-                                        .addGap(0, 0, Short.MAX_VALUE)
-                                        .addGroup(tblAnimalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                            .addComponent(txtNroAnimal, javax.swing.GroupLayout.PREFERRED_SIZE, 355, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addGroup(tblAnimalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                                .addComponent(txtPesoActAnimal, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 302, Short.MAX_VALUE)
-                                                .addComponent(txtPesoIngAnimal, javax.swing.GroupLayout.Alignment.TRAILING)))
-                                        .addGap(18, 18, 18)
-                                        .addGroup(tblAnimalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(btnEliminarAnimal)
-                                            .addComponent(btnBuscarAnimal)
-                                            .addComponent(btnGuardarAnimal)))
-                                    .addComponent(cboProductor, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addGap(179, 179, 179))))
+                            .addGroup(tblAnimalLayout.createSequentialGroup()
+                                .addGap(30, 30, 30)
+                                .addComponent(lblEstadoAnimal))
+                            .addGroup(tblAnimalLayout.createSequentialGroup()
+                                .addGap(64, 64, 64)
+                                .addGroup(tblAnimalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(cboProductor, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(cboCategoriaAnimal, javax.swing.GroupLayout.PREFERRED_SIZE, 322, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addContainerGap(105, Short.MAX_VALUE))
                     .addGroup(tblAnimalLayout.createSequentialGroup()
                         .addGroup(tblAnimalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel7)
                             .addComponent(jLabel6)
                             .addComponent(jLabel5))
-                        .addGap(272, 272, 272))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(tblAnimalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(txtPesoIngAnimal, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 322, Short.MAX_VALUE)
+                            .addComponent(txtNroAnimal, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(txtPesoActAnimal, javax.swing.GroupLayout.Alignment.TRAILING))
+                        .addGap(32, 32, 32)
+                        .addGroup(tblAnimalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btnEliminarAnimal)
+                            .addComponent(btnBuscarAnimal)
+                            .addComponent(btnGuardarAnimal))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         tblAnimalLayout.setVerticalGroup(
             tblAnimalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(tblAnimalLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(tblAnimalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(tblAnimalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel5)
-                        .addComponent(txtNroAnimal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(btnGuardarAnimal))
-                .addGap(34, 34, 34)
-                .addGroup(tblAnimalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(tblAnimalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel6)
-                        .addComponent(txtPesoIngAnimal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(btnBuscarAnimal))
-                .addGap(34, 34, 34)
-                .addGroup(tblAnimalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(tblAnimalLayout.createSequentialGroup()
-                        .addGroup(tblAnimalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel5)
+                        .addGap(60, 60, 60)
+                        .addComponent(jLabel6)
+                        .addGap(60, 60, 60)
+                        .addComponent(jLabel7))
+                    .addGroup(tblAnimalLayout.createSequentialGroup()
+                        .addGroup(tblAnimalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtNroAnimal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnGuardarAnimal))
+                        .addGap(34, 34, 34)
+                        .addGroup(tblAnimalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtPesoIngAnimal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnBuscarAnimal))
+                        .addGap(34, 34, 34)
+                        .addGroup(tblAnimalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(txtPesoActAnimal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel7))
-                        .addGap(50, 50, 50)
-                        .addGroup(tblAnimalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(cboCategoriaAnimal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel25)))
-                    .addComponent(btnEliminarAnimal))
-                .addGap(50, 50, 50)
+                            .addComponent(btnEliminarAnimal))))
+                .addGap(29, 29, 29)
+                .addGroup(tblAnimalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cboCategoriaAnimal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel25))
+                .addGap(55, 55, 55)
                 .addGroup(tblAnimalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel26)
                     .addComponent(cboProductor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -760,188 +789,6 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
         );
 
         tblmantenimientos.addTab("Animal", tblAnimal);
-
-        tblDieta.setBackground(new java.awt.Color(101, 175, 84));
-
-        jLabel13.setFont(new java.awt.Font("Ubuntu", 1, 15)); // NOI18N
-        jLabel13.setText("Nombre:");
-
-        jLabel14.setFont(new java.awt.Font("Ubuntu", 1, 15)); // NOI18N
-        jLabel14.setText("Tipo:");
-
-        jLabel15.setFont(new java.awt.Font("Ubuntu", 1, 15)); // NOI18N
-        jLabel15.setText("Duración (días):");
-
-        btnGuardarDieta.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Multimedia/save32.png"))); // NOI18N
-        btnGuardarDieta.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnGuardarDietaActionPerformed(evt);
-            }
-        });
-
-        btnBuscatDieta.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Multimedia/search32.png"))); // NOI18N
-        btnBuscatDieta.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnBuscatDietaActionPerformed(evt);
-            }
-        });
-
-        btnEliminarDieta.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Multimedia/delete32.png"))); // NOI18N
-        btnEliminarDieta.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnEliminarDietaActionPerformed(evt);
-            }
-        });
-
-        jLabel16.setFont(new java.awt.Font("Ubuntu", 1, 15)); // NOI18N
-        jLabel16.setText("Estado:");
-
-        lblEstadoDieta.setFont(new java.awt.Font("Ubuntu", 1, 15)); // NOI18N
-        lblEstadoDieta.setText("...");
-
-        cboTipoDieta.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
-        txtDuracionDieta.setText("0");
-
-        btnSumarInsumo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Multimedia/Down24.png"))); // NOI18N
-        btnSumarInsumo.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnSumarInsumoActionPerformed(evt);
-            }
-        });
-
-        btnRestarInsumo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Multimedia/Up24.png"))); // NOI18N
-        btnRestarInsumo.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnRestarInsumoActionPerformed(evt);
-            }
-        });
-
-        cboPosibles.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
-        tblInsumos.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "Id", "Insumo", "%"
-            }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.Object.class, java.lang.Object.class, java.lang.Float.class
-            };
-            boolean[] canEdit = new boolean [] {
-                true, true, false
-            };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
-        jScrollPane2.setViewportView(tblInsumos);
-        tblInsumos.getColumnModel().getColumn(0).setPreferredWidth(10);
-        tblInsumos.getColumnModel().getColumn(1).setPreferredWidth(60);
-        tblInsumos.getColumnModel().getColumn(2).setPreferredWidth(20);
-
-        txtPorcentaje.setText("0");
-
-        jLabel30.setFont(new java.awt.Font("Ubuntu", 1, 15)); // NOI18N
-        jLabel30.setText("Porcentaje (%):");
-
-        jLabel35.setFont(new java.awt.Font("Ubuntu", 1, 15)); // NOI18N
-        jLabel35.setText("Insumos:");
-
-        javax.swing.GroupLayout tblDietaLayout = new javax.swing.GroupLayout(tblDieta);
-        tblDieta.setLayout(tblDietaLayout);
-        tblDietaLayout.setHorizontalGroup(
-            tblDietaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(tblDietaLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(tblDietaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jScrollPane2)
-                    .addGroup(tblDietaLayout.createSequentialGroup()
-                        .addGroup(tblDietaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(tblDietaLayout.createSequentialGroup()
-                                .addComponent(jLabel13)
-                                .addGap(18, 18, 18)
-                                .addComponent(txtNombreDieta, javax.swing.GroupLayout.PREFERRED_SIZE, 381, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(tblDietaLayout.createSequentialGroup()
-                                .addComponent(jLabel16)
-                                .addGap(18, 18, 18)
-                                .addComponent(lblEstadoDieta)
-                                .addGap(195, 195, 195)
-                                .addComponent(jLabel15)
-                                .addGap(18, 18, 18)
-                                .addComponent(txtDuracionDieta, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(tblDietaLayout.createSequentialGroup()
-                                .addGap(145, 145, 145)
-                                .addComponent(btnSumarInsumo)
-                                .addGap(5, 5, 5)
-                                .addComponent(btnRestarInsumo))
-                            .addGroup(tblDietaLayout.createSequentialGroup()
-                                .addComponent(jLabel14)
-                                .addGap(71, 71, 71)
-                                .addComponent(cboTipoDieta, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                        .addGap(18, 18, 18)
-                        .addGroup(tblDietaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(tblDietaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(btnBuscatDieta)
-                                .addComponent(btnEliminarDieta))
-                            .addComponent(btnGuardarDieta)))
-                    .addGroup(tblDietaLayout.createSequentialGroup()
-                        .addComponent(jLabel35)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cboPosibles, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel30)
-                        .addGap(18, 18, 18)
-                        .addComponent(txtPorcentaje, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(47, Short.MAX_VALUE))
-        );
-        tblDietaLayout.setVerticalGroup(
-            tblDietaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(tblDietaLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(tblDietaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(tblDietaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel13)
-                        .addComponent(txtNombreDieta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(btnGuardarDieta))
-                .addGap(34, 34, 34)
-                .addGroup(tblDietaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(tblDietaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel14)
-                        .addComponent(cboTipoDieta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(btnBuscatDieta))
-                .addGap(34, 34, 34)
-                .addGroup(tblDietaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(tblDietaLayout.createSequentialGroup()
-                        .addGroup(tblDietaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel16)
-                            .addComponent(lblEstadoDieta)
-                            .addComponent(jLabel15)
-                            .addComponent(txtDuracionDieta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(50, 50, 50)
-                        .addGroup(tblDietaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel35)
-                            .addComponent(cboPosibles, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel30)
-                            .addComponent(txtPorcentaje, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(tblDietaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btnSumarInsumo)
-                            .addComponent(btnRestarInsumo)))
-                    .addComponent(btnEliminarDieta))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        tblmantenimientos.addTab("Dieta", tblDieta);
 
         tblProductor.setBackground(new java.awt.Color(101, 175, 84));
 
@@ -1131,16 +978,6 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
         jLabel40.setText("Agregar uno:");
 
         txtFechaIngreso.setText("ej: 10/01/11");
-        txtFechaIngreso.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                txtFechaIngresoMouseClicked(evt);
-            }
-        });
-        txtFechaIngreso.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtFechaIngresoActionPerformed(evt);
-            }
-        });
         txtFechaIngreso.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
                 txtFechaIngresoFocusGained(evt);
@@ -1340,11 +1177,235 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
 
         tblmantenimientos.addTab("Tropa", tblTropa);
 
+        jPanel1.setBackground(new java.awt.Color(101, 175, 84));
+
+        jLabel48.setText("Tropa:");
+
+        jButton2.setText("jButton2");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel48))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(136, 136, 136)
+                        .addComponent(txtEjemplo, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton2)))
+                .addContainerGap(299, Short.MAX_VALUE))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel48)
+                .addGap(40, 40, 40)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtEjemplo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton2))
+                .addContainerGap(344, Short.MAX_VALUE))
+        );
+
+        tblmantenimientos.addTab("Pesadas", jPanel1);
+
+        tblDieta.setBackground(new java.awt.Color(101, 175, 84));
+
+        jLabel13.setFont(new java.awt.Font("Ubuntu", 1, 15)); // NOI18N
+        jLabel13.setText("Nombre:");
+
+        jLabel14.setFont(new java.awt.Font("Ubuntu", 1, 15)); // NOI18N
+        jLabel14.setText("Tipo:");
+
+        jLabel15.setFont(new java.awt.Font("Ubuntu", 1, 15)); // NOI18N
+        jLabel15.setText("Duración (días):");
+
+        btnGuardarDieta.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Multimedia/save32.png"))); // NOI18N
+        btnGuardarDieta.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGuardarDietaActionPerformed(evt);
+            }
+        });
+
+        btnBuscatDieta.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Multimedia/search32.png"))); // NOI18N
+        btnBuscatDieta.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBuscatDietaActionPerformed(evt);
+            }
+        });
+
+        btnEliminarDieta.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Multimedia/delete32.png"))); // NOI18N
+        btnEliminarDieta.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEliminarDietaActionPerformed(evt);
+            }
+        });
+
+        jLabel16.setFont(new java.awt.Font("Ubuntu", 1, 15)); // NOI18N
+        jLabel16.setText("Estado:");
+
+        lblEstadoDieta.setFont(new java.awt.Font("Ubuntu", 1, 15)); // NOI18N
+        lblEstadoDieta.setText("...");
+
+        cboTipoDieta.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
+        txtDuracionDieta.setText("0");
+
+        btnSumarInsumo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Multimedia/Down24.png"))); // NOI18N
+        btnSumarInsumo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSumarInsumoActionPerformed(evt);
+            }
+        });
+
+        btnRestarInsumo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Multimedia/Up24.png"))); // NOI18N
+        btnRestarInsumo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRestarInsumoActionPerformed(evt);
+            }
+        });
+
+        cboPosibles.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
+        tblInsumos.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Id", "Insumo", "%"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Object.class, java.lang.Object.class, java.lang.Float.class
+            };
+            boolean[] canEdit = new boolean [] {
+                true, true, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane2.setViewportView(tblInsumos);
+        tblInsumos.getColumnModel().getColumn(0).setPreferredWidth(10);
+        tblInsumos.getColumnModel().getColumn(1).setPreferredWidth(60);
+        tblInsumos.getColumnModel().getColumn(2).setPreferredWidth(20);
+
+        txtPorcentaje.setText("0");
+
+        jLabel30.setFont(new java.awt.Font("Ubuntu", 1, 15)); // NOI18N
+        jLabel30.setText("Porcentaje (%):");
+
+        jLabel35.setFont(new java.awt.Font("Ubuntu", 1, 15)); // NOI18N
+        jLabel35.setText("Insumos:");
+
+        javax.swing.GroupLayout tblDietaLayout = new javax.swing.GroupLayout(tblDieta);
+        tblDieta.setLayout(tblDietaLayout);
+        tblDietaLayout.setHorizontalGroup(
+            tblDietaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(tblDietaLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(tblDietaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jScrollPane2)
+                    .addGroup(tblDietaLayout.createSequentialGroup()
+                        .addGroup(tblDietaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(tblDietaLayout.createSequentialGroup()
+                                .addComponent(jLabel35)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(cboPosibles, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel30)
+                                .addGap(23, 23, 23)
+                                .addComponent(txtPorcentaje, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(tblDietaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(tblDietaLayout.createSequentialGroup()
+                                    .addComponent(jLabel16)
+                                    .addGap(18, 18, 18)
+                                    .addComponent(lblEstadoDieta)
+                                    .addGap(195, 195, 195)
+                                    .addComponent(jLabel15)
+                                    .addGap(18, 18, 18)
+                                    .addComponent(txtDuracionDieta, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(tblDietaLayout.createSequentialGroup()
+                                    .addGap(145, 145, 145)
+                                    .addComponent(btnSumarInsumo)
+                                    .addGap(5, 5, 5)
+                                    .addComponent(btnRestarInsumo))
+                                .addGroup(tblDietaLayout.createSequentialGroup()
+                                    .addGroup(tblDietaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jLabel13)
+                                        .addComponent(jLabel14))
+                                    .addGap(18, 18, 18)
+                                    .addGroup(tblDietaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(cboTipoDieta, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(txtNombreDieta, javax.swing.GroupLayout.DEFAULT_SIZE, 381, Short.MAX_VALUE)))))
+                        .addGap(18, 18, 18)
+                        .addGroup(tblDietaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(tblDietaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addComponent(btnBuscatDieta)
+                                .addComponent(btnEliminarDieta))
+                            .addComponent(btnGuardarDieta))))
+                .addContainerGap(47, Short.MAX_VALUE))
+        );
+        tblDietaLayout.setVerticalGroup(
+            tblDietaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(tblDietaLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(tblDietaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(tblDietaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel13)
+                        .addComponent(txtNombreDieta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnGuardarDieta))
+                .addGap(34, 34, 34)
+                .addGroup(tblDietaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(tblDietaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel14)
+                        .addComponent(cboTipoDieta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnBuscatDieta))
+                .addGap(34, 34, 34)
+                .addGroup(tblDietaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(tblDietaLayout.createSequentialGroup()
+                        .addGroup(tblDietaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel16)
+                            .addComponent(lblEstadoDieta)
+                            .addComponent(jLabel15)
+                            .addComponent(txtDuracionDieta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(50, 50, 50)
+                        .addGroup(tblDietaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel35)
+                            .addComponent(cboPosibles, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel30)
+                            .addComponent(txtPorcentaje, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(tblDietaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btnSumarInsumo)
+                            .addComponent(btnRestarInsumo)))
+                    .addComponent(btnEliminarDieta))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        tblmantenimientos.addTab("Dieta", tblDieta);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(tblmantenimientos, javax.swing.GroupLayout.PREFERRED_SIZE, 589, Short.MAX_VALUE)
+            .addComponent(tblmantenimientos, javax.swing.GroupLayout.DEFAULT_SIZE, 589, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1386,10 +1447,10 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
                             new Object[]{"Si", "No"},
                             "Si");
                     if (seleccion == 0) {
-                        guardar(c);
+                        guardar(c, true);
                     }
                 } else {
-                    guardar(c);
+                    guardar(c, true);
                 }
             }
             limpiarCampos(tblCorral);
@@ -1413,13 +1474,12 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
 
     private void btnEliminarCorralActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarCorralActionPerformed
         try {
-
             Corral c = (Corral) buscar(Corral.class, txtNombreCorral.getText());
             if (c == null) {
                 JOptionPane.showMessageDialog(rootPane, "No se ha encontrado ningun corral con el nombre:" + txtNombreCorral.getText() + ".\nPor favor verifiquelo.");
             } else {
                 c.setEstado("INACTIVO");
-                guardar(c);
+                guardar(c, true);
                 limpiarCampos(tblCorral);
             }
         } catch (Exception e) {
@@ -1451,16 +1511,11 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
                         a.setPesoActual(Integer.parseInt(txtPesoActAnimal.getText()));
                     }
                 }
-
                 a.setNroCaravana(Integer.parseInt(txtNroAnimal.getText()));
-                a.setCategoria(
-                        (CategoriaAnimal) cboCategoriaAnimal.getSelectedItem());
-                a.setEstado(
-                        "ACTIVO");
-                a.setProductor(
-                        (Productor) cboProductor.getSelectedItem());
-                if (o
-                        != null) {
+                a.setCategoria((CategoriaAnimal) cboCategoriaAnimal.getSelectedItem());
+                a.setEstado("ACTIVO");
+                a.setProductor((Productor) cboProductor.getSelectedItem());
+                if (o != null) {
                     int seleccion = JOptionPane.showOptionDialog(null,
                             "El animal ya existe. Si continúa se modificaran los datos por los ingresados, en caso de estar INACTIVO se activará. \n ¿Desea continuar?",
                             "Seleccione una opción", // Título
@@ -1470,19 +1525,16 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
                             new Object[]{"Si", "No"},
                             "Si");
                     if (seleccion == 0) {
-                        guardar(a);
+                        guardar(a, true);
                     }
                 } else {
-                    guardar(a);
+                    guardar(a, true);
                 }
             }
-
             limpiarCampos(tblAnimal);
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Ocurrio un error inesperado, por favor verifique los datos ingresados");
-
-
         }
     }//GEN-LAST:event_btnGuardarAnimalActionPerformed
 
@@ -1507,7 +1559,7 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
                 JOptionPane.showMessageDialog(null, "No se ha encontrado ningun animal con el nro de caravana:" + txtNroAnimal.getText() + ".\nPor favor verifiquelo.");
             } else {
                 a.setEstado("INACTIVO");
-                guardar(a);
+                guardar(a, true);
                 limpiarCampos(tblAnimal);
             }
         } catch (Exception e) {
@@ -1523,20 +1575,16 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
             } else {
                 CategoriaAnimal c;
                 Object o = buscar(CategoriaAnimal.class, txtNombreCategoria.getText());
-                if (o
-                        == null) {
+                if (o == null) {
                     c = new CategoriaAnimal();
                 } else {
                     c = (CategoriaAnimal) o;
                 }
-
-                c.setEstado(
-                        "ACTIVO");
+                c.setEstado("ACTIVO");
                 c.setDias(Integer.parseInt(txtDiasCategoria.getText()));
                 c.setNombre(txtNombreCategoria.getText());
                 c.setObservaciones(txtObservacionesCategoria.getText());
-                if (o
-                        != null) {
+                if (o != null) {
                     int seleccion = JOptionPane.showOptionDialog(null,
                             "La categoría ya existe. Si continúa se modificaran los datos por los ingresados, en caso de estar INACTIVO se activará. \n ¿Desea continuar?",
                             "Seleccione una opción", // Título
@@ -1546,17 +1594,15 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
                             new Object[]{"Si", "No"},
                             "Si");
                     if (seleccion == 0) {
-                        guardar(c);
+                        guardar(c, true);
                     }
                 } else {
-                    guardar(c);
+                    guardar(c, true);
                 }
             }
             limpiarCampos(tblCategoria);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Ocurrio un error inesperado, por favor verifique los datos ingresados");
-
-
         }
     }//GEN-LAST:event_btnGuardarCategoriaActionPerformed
 
@@ -1578,10 +1624,9 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
                 JOptionPane.showMessageDialog(rootPane, "No se ha encontrado ninguna categoría de animal con el nombre:" + txtNombreCategoria.getText() + ".\nPor favor verifiquelo.");
             } else {
                 c.setEstado("INACTIVO");
-                guardar(c);
+                guardar(c, true);
             }
             limpiarCampos(tblCategoria);
-
         } catch (Exception e) {
         }
     }//GEN-LAST:event_btnEliminarCategoriaActionPerformed
@@ -1602,7 +1647,6 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
                 } else {
                     d = (Dieta) o;
                 }
-
                 d.setEstado("ACTIVO");
                 if (!txtDuracionDieta.getText().equals("")) {
                     d.setDuracion(Integer.parseInt(txtDuracionDieta.getText()));
@@ -1615,16 +1659,13 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
                 for (int i = 0;
                         i < mdlInsumosAsignados.getRowCount();
                         i++) {
-
                     Object aux = mdlInsumosAsignados.getValueAt(i, 2);
-
                     Float por = new Float("0.0");
                     if (aux.getClass() == String.class) {
                         por = Float.parseFloat((String) aux);
                     } else if (aux.getClass() == Float.class) {
                         por = (Float) aux;
                     }
-
                     suma += por;
                 }
                 if (mdlInsumosAsignados.getRowCount() > 0) {
@@ -1639,9 +1680,8 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
                                     new Object[]{"Si", "No"},
                                     "Si");
                             if (seleccion == 0) {
-
                                 eliminarDetalle(d);
-                                guardar(d);
+                                guardar(d, true);
                                 d = (Dieta) buscar(Dieta.class, d.getNombre());
                                 for (int i = 0; i < mdlInsumosAsignados.getRowCount(); i++) {
                                     DetalleDieta detalle = new DetalleDieta();
@@ -1660,15 +1700,12 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
                                      }*/
                                     detalle.setPorcentaje(por);
                                     detalle.setDieta(d);
-
-                                    guardar(detalle);
+                                    guardar(detalle, false);
                                 }
-
                             }
                         } else {
-
                             eliminarDetalle(d);
-                            guardar(d);
+                            guardar(d, true);
                             d = (Dieta) buscar(Dieta.class, d.getNombre());
                             for (int i = 0; i < mdlInsumosAsignados.getRowCount(); i++) {
                                 DetalleDieta detalle = new DetalleDieta();
@@ -1687,14 +1724,12 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
                                  }*/
                                 detalle.setPorcentaje(por);
                                 detalle.setDieta(d);
-                                guardar(detalle);
+                                guardar(detalle, false);
                             }
-
                         }
                     } else {
                         JOptionPane.showMessageDialog(null, "La sumatoria de porcentajes de la composición de la dieta debe ser 100%");
                     }
-
                 } else {
                     JOptionPane.showMessageDialog(null, "Debe asignar por lo menos un insumo para la dieta");
                 }
@@ -1708,7 +1743,6 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
     private void btnBuscatDietaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscatDietaActionPerformed
         Object o = buscar(Dieta.class, txtNombreDieta.getText());
         Dieta d = (Dieta) o;
-
         limpiar_tabla(mdlInsumosAsignados);
         if (d != null) {
             txtDuracionDieta.setText(Integer.toString(d.getDuracion()));
@@ -1732,7 +1766,7 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
                 JOptionPane.showMessageDialog(rootPane, "No se ha encontrado ninguna dieta con el nombre:" + txtNombreDieta.getText() + ".\nPor favor verifiquelo.");
             } else {
                 d.setEstado("INACTIVO");
-                guardar(d);
+                guardar(d, true);
             }
             limpiarCampos(tblDieta);
         } catch (Exception e) {
@@ -1758,12 +1792,9 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
                 ins.setNombre(txtNombreInsumo.getText());
                 ins.setPrecio(Integer.parseInt(txtPrecioInsumo.getText()));
                 ins.setHumedad(Float.parseFloat(txtHumedadInsumo.getText()));
-                ins.setStock(
-                        0);
-                ins.setEstado(
-                        "ACTIVO");
-                if (o
-                        != null) {
+                ins.setStock(0);
+                ins.setEstado("ACTIVO");
+                if (o != null) {
                     int seleccion = JOptionPane.showOptionDialog(null,
                             "El insumo ya existe. Si continúa se modificaran los datos por los ingresados, en caso de estar INACTIVO se activará. \n ¿Desea continuar?",
                             "Seleccione una opción", // Título
@@ -1773,31 +1804,22 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
                             new Object[]{"Si", "No"},
                             "Si");
                     if (seleccion == 0) {
-                        guardar(ins);
+                        guardar(ins, true);
                     }
                 } else {
-                    guardar(ins);
+                    guardar(ins, true);
                 }
             }
             limpiarCampos(tblInsumo);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Ocurrio un error inesperado. \nPor favor verifique los datos ingresados");
-
-
-
-
-
-
-
-
         }
 
     }//GEN-LAST:event_btnGuardarInsumoActionPerformed
     private void btnBuscarInsumoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarInsumoActionPerformed
         Object o = buscar(Insumo.class, txtNombreInsumo.getText());
         Insumo ins = (Insumo) o;
-        if (ins
-                != null) {
+        if (ins != null) {
             txtNombreInsumo.setText(ins.getNombre());
             txtHumedadInsumo.setText(Float.toString(ins.getHumedad()));
             lblEstadoInsumo.setText(ins.getEstado());
@@ -1813,7 +1835,7 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
                 JOptionPane.showMessageDialog(rootPane, "No se ha encontrado ningun insumo con el nombre:" + txtNombreInsumo.getText() + ".\nPor favor verifiquelo.");
             } else {
                 ins.setEstado("INACTIVO");
-                guardar(ins);
+                guardar(ins, true);
             }
             limpiarCampos(tblInsumo);
         } catch (Exception e) {
@@ -1828,10 +1850,6 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
         sumarInsumo();
     }//GEN-LAST:event_btnSumarInsumoActionPerformed
 
-    private void txtInsumoStockActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtInsumoStockActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtInsumoStockActionPerformed
-
     private void btnIngresoStockActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIngresoStockActionPerformed
         IngresoStock();
     }//GEN-LAST:event_btnIngresoStockActionPerformed
@@ -1843,8 +1861,7 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
     private void btnBuscarStockActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarStockActionPerformed
         Object o = buscar(Insumo.class, txtInsumoStock.getText());
         Insumo ins = (Insumo) o;
-        if (ins
-                != null) {
+        if (ins != null) {
             lblStockActual.setText(Integer.toString(ins.getStock()));
         } else {
             JOptionPane.showMessageDialog(rootPane, "No se ha encontrado ningun Insumo con el nombre:" + txtNombreInsumo.getText() + ".\nPor favor verifiquelo.");
@@ -1857,9 +1874,8 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
             if (p == null) {
                 JOptionPane.showMessageDialog(rootPane, "No se ha encontrado ningun productor con el nombre:" + txtNombreProductor.getText() + ".\nPor favor verifiquelo.");
             } else {
-                p.setEstado(
-                        "INACTIVO");
-                guardar(p);
+                p.setEstado("INACTIVO");
+                guardar(p, true);
             }
             limpiarCampos(tblProductor);
         } catch (Exception e) {
@@ -1868,9 +1884,7 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
 
     private void btnBuscarProductorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarProductorActionPerformed
         Productor p = (Productor) buscar(Productor.class, txtNombreProductor.getText());
-
-        if (p
-                != null) {
+        if (p != null) {
             txtNombreProductor.setText(p.getNombre());
             txtDireccionProductor.setText(p.getDireccion());
             txtDicose.setText(p.getDicose());
@@ -1900,13 +1914,11 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
                 Productor p;
                 boolean aux;
                 Object o = buscar(Productor.class, txtNombreProductor.getText());
-                if (o
-                        == null) {
+                if (o == null) {
                     p = new Productor();
                 } else {
                     p = (Productor) o;
                 }
-
                 p.setNombre(txtNombreProductor.getText());
                 p.setDireccion(txtDireccionProductor.getText());
                 p.setEmail(txtMailProductor.getText());
@@ -1917,14 +1929,12 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
                 } else {
                     aux = false;
                 }
-
                 p.setEstado("ACTIVO");
                 p.setProduce(aux);
                 if (!txtTelefonoProductor.getText().equals("")) {
                     p.setTelefono(Integer.parseInt(txtTelefonoProductor.getText()));
                 }
-                if (o
-                        != null) {
+                if (o != null) {
                     int seleccion = JOptionPane.showOptionDialog(null,
                             "El productor ya existe. Si continúa se modificaran los datos por los ingresados, en caso de estar INACTIVO se activará. \n ¿Desea continuar?",
                             "Seleccione una opción", // Título
@@ -1934,10 +1944,10 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
                             new Object[]{"Si", "No"},
                             "Si");
                     if (seleccion == 0) {
-                        guardar(p);
+                        guardar(p, true);
                     }
                 } else {
-                    guardar(p);
+                    guardar(p, true);
                 }
             }
             limpiarCampos(tblProductor);
@@ -1955,9 +1965,6 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
         desactivarcheck(chkNo);
     }//GEN-LAST:event_chkNoActionPerformed
 
-    private void txtFechaIngresoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtFechaIngresoActionPerformed
-    }//GEN-LAST:event_txtFechaIngresoActionPerformed
-
     private void btnAbrirDocumentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAbrirDocumentoActionPerformed
         JFileChooser jf = new JFileChooser();
         jf.showOpenDialog(null);
@@ -1966,7 +1973,6 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
             String filename = f.getAbsolutePath();
             lblDocumento.setText(filename);
         }
-
     }//GEN-LAST:event_btnAbrirDocumentoActionPerformed
 
     private void btnGuardarTropaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarTropaActionPerformed
@@ -2000,10 +2006,10 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
                             new Object[]{"Si", "No"},
                             "Si");
                     if (seleccion == 0) {
-                        guardar(t);
+                        guardar(t, true);
                     }
                 } else {
-                    guardar(t);
+                    guardar(t, true);
                 }
             }
             limpiarCampos(tblTropa);
@@ -2035,31 +2041,54 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
     }//GEN-LAST:event_btnBuscarTropaActionPerformed
 
     private void btnEliminarTropaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarTropaActionPerformed
-        // TODO add your handling code here:
+        try {
+            Tropa t = (Tropa) buscar(Tropa.class, txtNroTropa.getText());
+            if (t == null) {
+                JOptionPane.showMessageDialog(rootPane, "No se ha encontrado ninguna tropa con el nro:" + txtNroTropa.getText() + ".\nPor favor verifiquelo.");
+            } else {
+                t.setEstado(
+                        "INACTIVO");
+                guardar(t, true);
+            }
+            limpiarCampos(tblTropa);
+        } catch (Exception e) {
+        }
     }//GEN-LAST:event_btnEliminarTropaActionPerformed
-
-    private void txtFechaIngresoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtFechaIngresoMouseClicked
-    }//GEN-LAST:event_txtFechaIngresoMouseClicked
 
     private void txtFechaIngresoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtFechaIngresoFocusGained
         txtFechaIngreso.setText("");
     }//GEN-LAST:event_txtFechaIngresoFocusGained
 
     private void btnAgregarAnimalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarAnimalActionPerformed
-        Object o = buscar(Animal.class, txtAnimalTropa.getText());
-        Animal a = (Animal) o;
-        if (a != null) {
-            tblAnimalesTropa.setModel(mdlAnimal);
-            mdlAnimal.addRow(new Object[]{a.getNroCaravana(), a.getPesoActual(), 0});
+        tblAnimalesTropa.setModel(mdlAnimal);
+        if (!txtAnimalTropa.getText().equals("")) {
+            Object o = buscar(Animal.class, txtAnimalTropa.getText());
+            Animal a = (Animal) o;
+            if (a != null) {
+                mdlAnimal.addRow(new Object[]{a.getNroCaravana(), a.getPesoActual(), 0});
+            } else {
+                JOptionPane.showMessageDialog(null, "No se ha encontrado ningun animal con el numero de caravana:" + txtAnimalTropa.getText() + ".\nPor favor verifiquelo.");
+            }
+            txtAnimalTropa.setText("");
         } else {
-            JOptionPane.showMessageDialog(null, "No se ha encontrado ningun animal con el numero de caravana:" + txtNroAnimal.getText() + ".\nPor favor verifiquelo.");
+            JOptionPane.showMessageDialog(null, "Debe ingresar un nro de caravana en el campo 'Agregar uno'");
         }
-        txtAnimalTropa.setText("");
     }//GEN-LAST:event_btnAgregarAnimalActionPerformed
 
     private void GuardarTropaAnimalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_GuardarTropaAnimalActionPerformed
         GuardarAnimalesTropa();
     }//GEN-LAST:event_GuardarTropaAnimalActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        DateFormat df = new SimpleDateFormat("dd/MM/yy");
+        try {
+            Date fecha=df.parse(txtEjemplo.getText());
+            JOptionPane.showMessageDialog(rootPane, fecha);
+        } catch (ParseException ex) {
+            Logger.getLogger(Mantenimientos.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jButton2ActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton GuardarTropaAnimal;
     private javax.swing.JButton btnAbrirDocumento;
@@ -2098,6 +2127,7 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
     private javax.swing.JCheckBox chkNo;
     private javax.swing.JCheckBox chkSI;
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -2138,11 +2168,15 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
     private javax.swing.JLabel jLabel43;
     private javax.swing.JLabel jLabel44;
     private javax.swing.JLabel jLabel45;
+    private javax.swing.JLabel jLabel46;
+    private javax.swing.JLabel jLabel47;
+    private javax.swing.JLabel jLabel48;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
@@ -2176,11 +2210,13 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
     private javax.swing.JTextField txtDicose;
     private javax.swing.JTextField txtDireccionProductor;
     private javax.swing.JTextField txtDuracionDieta;
+    private javax.swing.JTextField txtEgreso;
+    private javax.swing.JTextField txtEjemplo;
     private javax.swing.JTextField txtFechaIngreso;
     private javax.swing.JTextField txtHumedadInsumo;
+    private javax.swing.JTextField txtIngreso;
     private javax.swing.JTextField txtInsumoStock;
     private javax.swing.JTextField txtMailProductor;
-    private javax.swing.JTextField txtModificacionStock;
     private javax.swing.JTextField txtNombreCategoria;
     private javax.swing.JTextField txtNombreCorral;
     private javax.swing.JTextField txtNombreDieta;
@@ -2200,25 +2236,25 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
     private javax.swing.JTextField txtTelefonoProductor;
     private javax.swing.JTextField txtTipoNegocio;
     // End of variables declaration//GEN-END:variables
-
-    public static Object guardar(Object object) {
-
-        object = Persistencia.FachadaPersistencia.getInstancia().Guardar(object);
-        return object;
-    }
-
-    public static Object buscar(Object o, Object obj) {
-
-        Object c = new Object();
-        c = Persistencia.FachadaPersistencia.getInstancia().buscar(o, obj);
-        return c;
-    }
     DefaultComboBoxModel<Object> mdcProductor = new DefaultComboBoxModel<>();
     DefaultComboBoxModel<Object> mdcCategoria = new DefaultComboBoxModel<>();
     DefaultComboBoxModel<Object> mdcTipoDieta = new DefaultComboBoxModel<>();
     DefaultTableModel mdlAnimal = new DefaultTableModel(new String[]{"Nro Caravana", "Peso actual"}, 0);
+    DefaultTableModel mdlInsumosAsignados = new DefaultTableModel(new String[]{"ID", "Insumo", "%"}, 0);
+    DefaultComboBoxModel<Object> mdcInsumosPosibles = new DefaultComboBoxModel<>();
 
-    private void cargar_combos() {
+    public static Object guardar(Object object, Boolean msj) {
+        object = Persistencia.FachadaPersistencia.getInstancia().Guardar(object, msj);
+        return object;
+    }
+
+    public static Object buscar(Object o, Object obj) {
+        Object c = new Object();
+        c = Persistencia.FachadaPersistencia.getInstancia().buscar(o, obj);
+        return c;
+    }
+
+    private void cargarCombos() {
         mdcProductor.removeAllElements();
         cboProductor.setModel(mdcProductor);
         cboPropietario.setModel(mdcProductor);
@@ -2229,20 +2265,15 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
         }
 
         mdcCategoria.removeAllElements();
-
         cboCategoriaAnimal.setModel(mdcCategoria);
-
-        cboCategoriaAnimal.setSelectedItem(
-                null);
+        cboCategoriaAnimal.setSelectedItem(null);
         List<Object> categorias = FachadaPersistencia.getInstancia().listadoHabilitados(CategoriaAnimal.class);
         for (Object o : categorias) {
             mdcCategoria.addElement(o);
         }
 
         mdcTipoDieta.removeAllElements();
-
         cboTipoDieta.setModel(mdcTipoDieta);
-
         cboTipoDieta.setSelectedItem(null);
         mdcTipoDieta.addElement("Iniciación");
         mdcTipoDieta.addElement("Adaptación");
@@ -2255,19 +2286,12 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
             mdcInsumosPosibles.addElement(o);
         }
         mdcInsumosPosibles.setSelectedItem(null);
-
-    }
-    DefaultTableModel mdlInsumosAsignados = new DefaultTableModel(new String[]{"ID", "Insumo", "%"}, 0);
-    DefaultComboBoxModel<Object> mdcInsumosPosibles = new DefaultComboBoxModel<>();
-
-    private void cargar_listas() {
     }
 
     private void limpiar_tabla(DefaultTableModel d) {
         while (d.getRowCount() > 0) {
             d.removeRow(0);
         }
-
     }
 
     private void sumarInsumo() {
@@ -2303,7 +2327,6 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
     private Integer calcularCosto() {
         Integer aux = 0;
         return aux;
-
         //esta funcion debe recorrer la lista de insumos y sumar el costo
     }
 
@@ -2319,8 +2342,8 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
         try {
             if (txtInsumoStock.getText().equals("")) {
                 JOptionPane.showMessageDialog(null, "Debe ingresar el nombre del insumo");
-            } else if (txtModificacionStock.getText().equals("")) {
-                JOptionPane.showMessageDialog(null, "Debe ingresar la variación de stock que sufrirá el insumo");
+            } else if (txtIngreso.getText().equals("")) {
+                JOptionPane.showMessageDialog(null, "Debe ingresar cuanto aumenta el stock del insumo");
             } else {
                 Object o = buscar(Insumo.class, txtInsumoStock.getText());
                 Insumo ins = (Insumo) o;
@@ -2329,7 +2352,7 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
                     JOptionPane.showMessageDialog(null, "No existe el Insumo, \nPor favor verifique");
                 } else {
                     int stockAnterior = ins.getStock();
-                    int stockPosterior = stockAnterior + Integer.parseInt(txtModificacionStock.getText());
+                    int stockPosterior = stockAnterior + Integer.parseInt(txtIngreso.getText());
                     cs = new CambioStock();
                     cs.setFecha(new Date());
                     cs.setInsumo(ins);
@@ -2337,12 +2360,11 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
                     cs.setStockAnterior(stockAnterior);
                     cs.setStockPosterior(stockPosterior);
                     ins.setStock(stockPosterior);
-                    guardar(cs);
-                    guardar(ins);
+                    guardar(cs, false);
+                    guardar(ins, true);
                 }
             }
             limpiarCampos(tblStock);
-
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Ocurrio un error inesperado, por favor verifique los datos ingresados");
@@ -2354,8 +2376,8 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
         try {
             if (txtInsumoStock.getText().equals("")) {
                 JOptionPane.showMessageDialog(null, "Debe ingresar el nombre del insumo");
-            } else if (txtModificacionStock.getText().equals("")) {
-                JOptionPane.showMessageDialog(null, "Debe ingresar la variación de stock que sufrirá el insumo");
+            } else if (txtEgreso.getText().equals("")) {
+                JOptionPane.showMessageDialog(null, "Debe ingresar cuanto se reduce el stock del insumo");
             } else {
                 Object o = buscar(Insumo.class, txtInsumoStock.getText());
                 Insumo ins = (Insumo) o;
@@ -2364,7 +2386,7 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
                     JOptionPane.showMessageDialog(null, "No existe el Insumo, \nPor favor verifique");
                 } else {
                     int stockAnterior = ins.getStock();
-                    int stockPosterior = stockAnterior - Integer.parseInt(txtModificacionStock.getText());
+                    int stockPosterior = stockAnterior - Integer.parseInt(txtEgreso.getText());
                     cs = new CambioStock();
                     cs.setFecha(new Date());
                     cs.setInsumo(ins);
@@ -2372,8 +2394,8 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
                     cs.setStockAnterior(stockAnterior);
                     cs.setStockPosterior(stockPosterior);
                     ins.setStock(stockPosterior);
-                    guardar(cs);
-                    guardar(ins);
+                    guardar(cs, false);
+                    guardar(ins, true);
                 }
             }
             limpiarCampos(tblStock);
@@ -2381,12 +2403,6 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Ocurrio un error inesperado. \nPor favor verifique los datos ingresados");
         }
-    }
-
-    @Override
-    public void update(Observable o, Object o1) {
-        cargar_combos();
-        cargar_listas();
     }
 
     public void limpiarCampos(JPanel jPanel) {
@@ -2429,11 +2445,16 @@ public class Mantenimientos extends javax.swing.JInternalFrame implements Observ
                     Date dt = df.parse(txtFechaIngreso.getText());
                     ta.setFechaIng(dt);
                     ta.setTropa(tropa);
-                    guardar(ta);
+                    guardar(ta, true);
                 }
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Ocurrio un error inesperado. Por Favor verifique los datos");
         }
+    }
+
+    @Override
+    public void update(Observable o, Object o1) {
+        cargarCombos();
     }
 }

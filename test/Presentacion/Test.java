@@ -61,7 +61,7 @@ public class Test {
                     a.setPesoActual(500 + i);
                     a.setPesoIngreso(500 + i);
                     a.setProductor((Productor) FachadaPersistencia.getInstancia().buscar(Productor.class, p.getNombre()));
-                    FachadaPersistencia.getInstancia().Guardar(a);
+                    FachadaPersistencia.getInstancia().Guardar(a, true);
                     System.err.println(i);
                 }
                 System.err.println("Termino el guardado");
@@ -78,7 +78,7 @@ public class Test {
                    p.setProduce(true);
                    p.setTelefono(i);
                    p.setObservacion("Observacion"+i);
-                    FachadaPersistencia.getInstancia().Guardar(p);
+                    FachadaPersistencia.getInstancia().Guardar(p, true);
                     System.err.println(i);
                 }
                 System.err.println("Termino el guardado");

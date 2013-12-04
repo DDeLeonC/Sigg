@@ -46,7 +46,7 @@ public class MantenimientosTest {
         System.out.println("guardar");
         Object object = null;
         Object expResult = null;
-        Object result = Mantenimientos.guardar(object);
+        Object result = Mantenimientos.guardar(object, true);
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");

@@ -48,8 +48,6 @@ public class Animal implements Serializable {
     private CategoriaAnimal categoria;
     @ManyToOne(cascade = CascadeType.ALL)
     private Productor productor;
-    @ManyToOne(cascade = CascadeType.ALL)
-    private Tropa tropa;
     @Basic(optional = false)
     @Column(name = "fechaIng")
     @Temporal(javax.persistence.TemporalType.DATE)
@@ -130,14 +128,6 @@ public class Animal implements Serializable {
 
     public void setProductor(Productor productor) {
         this.productor = productor;
-    }
-
-    public Tropa getTropa() {
-        return tropa;
-    }
-
-    public void setTropa(Tropa tropa) {
-        this.tropa = tropa;
     }
 
     @Override
